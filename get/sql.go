@@ -23,7 +23,7 @@ func init() {
 }
 
 func sqlset(t *thread) {
-	stmt, err := db.Prepare(`INSERT INTO hidethread VALUES (?,?,?,?,?,?,?)`)
+	stmt, err := db.Prepare(`INSERT INTO hidethread VALUES (?,?,?,?,?,?,?,?)`)
 	defer stmt.Close()
 	if err != nil {
 		panic(err)
