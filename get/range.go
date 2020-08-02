@@ -14,7 +14,7 @@ func Start(start, end int, id int) {
 	if s == 0 {
 		_, err := db.Exec("INSERT INTO hidethread VALUES (?,?,0,0,0,0,0,0,0)", id, start)
 		if err != nil {
-			panic(err)
+			log.Println(err)
 		}
 	}
 	for s < end {
