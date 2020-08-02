@@ -2,8 +2,8 @@ package get
 
 import (
 	"database/sql"
+	"encoding/json"
 	"log"
-	"strings"
 
 	//数据库驱动
 	_ "github.com/mattn/go-sqlite3"
@@ -55,13 +55,19 @@ func qasave(t *thread) {
 	fid := t.Variables.Thread["fid"].(string)
 	subject := t.Variables.Thread["subject"].(string)
 	temptxt := t.Variables.Postlist
-	tt := make([]string, len(temptxt))
+	tt := make([]string, 0, len(temptxt))
 	for _, v := range temptxt {
 		m := v.(map[string]interface{})
-		k := m["message"].(string)
-		tt = append(tt, k)
+		k, ok := m["message"].(string)
+		if ok && k != "" {
+			tt = append(tt, k)
+		}
 	}
-	stmt.Exec(tid, fid, subject, strings.Join(tt, ","))
+	b, err := json.Marshal(tt)
+	if err != nil {
+		panic(err)
+	}
+	stmt.Exec(tid, fid, subject, string(b))
 
 }
 
