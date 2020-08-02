@@ -18,7 +18,7 @@ func Start(start, end int, id int) {
 		}
 	}
 	for s < end {
-		time.Sleep(1 * time.Second)
+		time.Sleep(500 * time.Millisecond)
 		s = sqlget(id)
 		b, err := getjson(strconv.Itoa(s))
 		if err != nil {
