@@ -21,6 +21,7 @@ func init() {
 	}
 	_, err = db.Exec(`CREATE TABLE hidethread(tid INT PRIMARY KEY NOT NULL,fid TEXT NOT NULL,authorid TEXT NOT NULL,author TEXT NOT NULL,views INT NOT NULL,dateline TEXT NOT NULL,lastpost TEXT NOT NULL,lastposter TEXT NOT NULL,subject TEXT NOT NULL)`)
 	_, err = db.Exec(`CREATE TABLE qa(tid INT PRIMARY KEY NOT NULL,fid TEXT NOT NULL,subject TEXT NOT NULL,txt TEXT NOT NULL)`)
+	_, err = db.Exec(`CREATE TABLE config(id INT PRIMARY KEY NOT NULL,i INT NOT NULL)`)
 	if err != nil {
 		log.Println(err)
 	}
@@ -108,7 +109,7 @@ func sqlget(id int) int {
 }
 
 func sqlup(s, id int) {
-	stmt, err := db.Prepare("UPDATE hidethread SET fid = ? WHERE tid = ?")
+	stmt, err := db.Prepare("UPDATE config SET i = ? WHERE id = ?")
 	if err != nil {
 		panic(err)
 	}

@@ -12,11 +12,9 @@ var w sync.WaitGroup
 func Start(start, end int, id int) {
 	s := sqlget(id)
 	if s == 0 {
-		_, err := db.Exec("INSERT INTO hidethread VALUES (?,?,0,0,0,0,0,0,0)", id, start)
+		_, err := db.Exec("INSERT INTO config VALUES (?,?)", id, start)
 		if err != nil {
-			log.Println(err)
-			w.Done()
-			return
+			panic(err)
 		}
 	}
 	for s < end {
@@ -42,21 +40,20 @@ func Start(start, end int, id int) {
 		s++
 		sqlup(s, id)
 	}
-	sqlup(0, id)
 	w.Done()
 }
 
-func Range(maxtid, thread int) {
+func Range(mintid, maxtid, thread int) {
 	a := maxtid / thread
 	w.Add(1)
-	go Start(a*thread, maxtid+1, thread+100000000)
+	go Start(a*thread+mintid, maxtid+1+mintid, -thread)
 	for i := 0; i < thread; i++ {
 		b := a * i
 		if b == 0 {
 			b++
 		}
 		w.Add(1)
-		go Start(b, a*(i+1), i+100000000)
+		go Start(b+mintid, a*(i+1)+mintid, -i)
 	}
 	w.Wait()
 }
