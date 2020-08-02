@@ -18,14 +18,6 @@ func init() {
 	rows, err := db.Query(`SELECT json FROM hidethread`)
 	defer rows.Close()
 	if err != nil {
-		panic(err)
-	}
-	var j string
-	for rows.Next() {
-		rows.Scan(&j)
-		break
-	}
-	if j == "" {
 		_, err := db.Exec(`CREATE TABLE hidethread(tid INT PRIMARY KEY NOT NULL,fid TEXT NOT NULL,authorid TEXT NOT NULL,author TEXT NOT NULL,views INT NOT NULL,lastpost TEXT NOT NULL,lastposter TEXT NOT NULL)`)
 		if err != nil {
 			panic(err)
