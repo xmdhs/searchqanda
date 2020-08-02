@@ -22,13 +22,13 @@ func Start(start, end int, id int) {
 		s = sqlget(id)
 		b, err := getjson(strconv.Itoa(s))
 		if err != nil {
-			log.Println(err)
+			log.Println(err, "tid", s)
 			time.Sleep(5 * time.Second)
 			continue
 		}
 		t, err := json2(b)
 		if err != nil {
-			log.Println(err)
+			log.Println(err, "tid", s)
 			time.Sleep(5 * time.Second)
 			continue
 		}
@@ -53,5 +53,5 @@ func Range(maxtid, thread int) {
 		w.Add(1)
 		go Start(b, a*(i+1), i+100000000)
 	}
-	w.Done()
+	w.Wait()
 }

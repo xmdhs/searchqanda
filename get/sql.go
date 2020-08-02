@@ -2,6 +2,7 @@ package get
 
 import (
 	"database/sql"
+	"log"
 
 	//数据库驱动
 	_ "github.com/mattn/go-sqlite3"
@@ -15,13 +16,9 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	rows, err := db.Query(`SELECT json FROM hidethread`)
-	defer rows.Close()
+	_, err = db.Exec(`CREATE TABLE hidethread(tid INT PRIMARY KEY NOT NULL,fid TEXT NOT NULL,authorid TEXT NOT NULL,author TEXT NOT NULL,views INT NOT NULL,lastpost TEXT NOT NULL,lastposter TEXT NOT NULL,subject TEXT NOT NULL)`)
 	if err != nil {
-		_, err := db.Exec(`CREATE TABLE hidethread(tid INT PRIMARY KEY NOT NULL,fid TEXT NOT NULL,authorid TEXT NOT NULL,author TEXT NOT NULL,views INT NOT NULL,lastpost TEXT NOT NULL,lastposter TEXT NOT NULL)`)
-		if err != nil {
-			panic(err)
-		}
+		log.Println(err)
 	}
 }
 
@@ -38,9 +35,10 @@ func sqlset(t *thread) {
 	views := t.Variables.Thread["views"].(string)
 	lastpost := t.Variables.Thread["lastpost"].(string)
 	lastposter := t.Variables.Thread["lastposter"].(string)
-	_, err = stmt.Exec(tid, fid, authorid, author, views, lastpost, lastposter)
+	subject := t.Variables.Thread["subject"].(string)
+	_, err = stmt.Exec(tid, fid, authorid, author, views, lastpost, lastposter, subject)
 	if err != nil {
-		panic(err)
+		log.Println(err, t)
 	}
 }
 
