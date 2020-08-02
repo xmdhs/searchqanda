@@ -12,7 +12,7 @@ var w sync.WaitGroup
 func Start(start, end int, id int) {
 	s := sqlget(id)
 	if s == 0 {
-		_, err := db.Exec("INSERT INTO hidethread VALUES (?,?,0,0,0,0,0)", id, start)
+		_, err := db.Exec("INSERT INTO hidethread VALUES (?,?,0,0,0,0,0,0)", id, start)
 		if err != nil {
 			panic(err)
 		}
