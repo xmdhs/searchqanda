@@ -37,6 +37,7 @@ func sqlset(t *thread) {
 	lastposter := t.Variables.Thread["lastposter"].(string)
 	subject := t.Variables.Thread["subject"].(string)
 	_, err = stmt.Exec(tid, fid, authorid, author, views, lastpost, lastposter, subject)
+	log.Println(tid, fid, authorid, author, views, lastpost, lastposter, subject)
 	if err != nil {
 		log.Println(err, t)
 	}
