@@ -17,7 +17,7 @@ func Start(start, end int, id int) {
 			panic(err)
 		}
 	}
-	if s < start || s >= end {
+	if s < start || s > end {
 		_, err := db.Exec("UPDATE config SET i = ? WHERE id = ?", start, id)
 		if err != nil {
 			panic(err)
@@ -52,14 +52,14 @@ func Start(start, end int, id int) {
 func Range(mintid, maxtid, thread int) {
 	a := maxtid / thread
 	w.Add(1)
-	go Start(a*thread+mintid, maxtid+1+mintid, -thread)
+	go Start(a*thread+mintid, maxtid+1+mintid, thread)
 	for i := 0; i < thread; i++ {
 		b := a * i
 		if b == 0 {
 			b++
 		}
 		w.Add(1)
-		go Start(b+mintid, a*(i+1)+mintid, -i)
+		go Start(b+mintid, a*(i+1)+mintid, i)
 	}
 	w.Wait()
 }
