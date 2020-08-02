@@ -17,6 +17,12 @@ func Start(start, end int, id int) {
 			panic(err)
 		}
 	}
+	if s < start || s >= end {
+		_, err := db.Exec("UPDATE config SET i = ? WHERE id = ?", start, id)
+		if err != nil {
+			panic(err)
+		}
+	}
 	for s < end {
 		time.Sleep(500 * time.Millisecond)
 		s = sqlget(id)
