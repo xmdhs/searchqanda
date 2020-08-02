@@ -3,6 +3,7 @@ package get
 import (
 	"database/sql"
 	"log"
+	"strings"
 
 	//数据库驱动
 	_ "github.com/mattn/go-sqlite3"
@@ -17,6 +18,7 @@ func init() {
 		panic(err)
 	}
 	_, err = db.Exec(`CREATE TABLE hidethread(tid INT PRIMARY KEY NOT NULL,fid TEXT NOT NULL,authorid TEXT NOT NULL,author TEXT NOT NULL,views INT NOT NULL,lastpost TEXT NOT NULL,lastposter TEXT NOT NULL,subject TEXT NOT NULL)`)
+	_, err = db.Exec(`CREATE TABLE qa(tid INT PRIMARY KEY NOT NULL,fid TEXT NOT NULL,subject TEXT NOT NULL,txt TEXT NOT NULL)`)
 	if err != nil {
 		log.Println(err)
 	}
@@ -41,6 +43,26 @@ func sqlset(t *thread) {
 	if err != nil {
 		log.Println(err, t)
 	}
+}
+
+func qasave(t *thread) {
+	stmt, err := db.Prepare(`INSERT INTO qa VALUES (?,?,?,?)`)
+	defer stmt.Close()
+	if err != nil {
+		panic(err)
+	}
+	tid := t.Variables.Thread["tid"].(string)
+	fid := t.Variables.Thread["fid"].(string)
+	subject := t.Variables.Thread["subject"].(string)
+	temptxt := t.Variables.Postlist
+	tt := make([]string, len(temptxt))
+	for _, v := range temptxt {
+		m := v.(map[string]interface{})
+		k := m["message"].(string)
+		tt = append(tt, k)
+	}
+	stmt.Exec(tid, fid, subject, strings.Join(tt, ","))
+
 }
 
 func sqlget(id int) int {

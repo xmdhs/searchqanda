@@ -34,10 +34,13 @@ func Start(start, end int, id int) {
 		}
 		if ishide(t) {
 			sqlset(t)
+		} else if isqa(t) {
+			qasave(t)
 		}
 		s++
 		sqlup(s, id)
 	}
+	sqlup(0, id)
 	w.Done()
 }
 
