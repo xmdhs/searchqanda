@@ -92,7 +92,7 @@ type post struct {
 }
 
 func sqlget(id int) int {
-	stmt, err := db.Prepare(`SELECT fid FROM hidethread WHERE tid = ?`)
+	stmt, err := db.Prepare(`SELECT i FROM config WHERE id = ?`)
 	defer stmt.Close()
 	if err != nil {
 		panic(err)
