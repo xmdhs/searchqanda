@@ -52,7 +52,7 @@ func Start(start, end int, id int) {
 func Range(mintid, maxtid, thread int) {
 	a := maxtid / thread
 	w.Add(1)
-	go Start(a*thread+mintid, maxtid+1+mintid, thread)
+	go Start(a*thread+mintid, maxtid+1, thread)
 	for i := 0; i < thread; i++ {
 		b := a * i
 		if b == 0 {
