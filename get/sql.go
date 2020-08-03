@@ -82,7 +82,10 @@ func qasave(t *thread) {
 	if err != nil {
 		panic(err)
 	}
-	stmt.Exec(tid, fid, subject, string(b))
+	_, err = stmt.Exec(tid, fid, subject, string(b))
+	if err != nil {
+		log.Println(err, t)
+	}
 
 }
 
@@ -110,6 +113,7 @@ func sqlget(id int) int {
 
 func sqlup(s, id int) {
 	stmt, err := db.Prepare("UPDATE config SET i = ? WHERE id = ?")
+	defer stmt.Close()
 	if err != nil {
 		panic(err)
 	}
