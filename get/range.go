@@ -34,8 +34,8 @@ func Start(start, end int, id int) {
 		}
 		t, err := json2(b)
 		if err != nil {
-			log.Println(err, "tid", s)
-			time.Sleep(5 * time.Second)
+			s++
+			sqlup(s, id)
 			continue
 		}
 		if ishide(t) {
