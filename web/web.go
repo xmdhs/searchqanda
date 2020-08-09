@@ -48,3 +48,7 @@ func Style(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("content-type", "text/css")
 	w.Write([]byte(css))
 }
+
+func Index(w http.ResponseWriter, req *http.Request) {
+	w.Write([]byte(index))
+}

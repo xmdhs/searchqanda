@@ -12,6 +12,7 @@ import (
 func main() {
 	go upsql()
 	r := http.NewServeMux()
+	r.HandleFunc("/", web.Index)
 	r.HandleFunc("/s", web.WebRoot)
 	r.HandleFunc("/style.css", web.Style)
 	r.HandleFunc("/hide", web.Hidethead)
