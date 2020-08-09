@@ -13,7 +13,7 @@ const (
 	  <div class="container-lg px-3 my-5 markdown-body">
 		<h1 id="{{.Name}}">{{.Name}}</h1>
 		{{range .List}}
-		<h3 id="{{ .Title}}"><a href="{{ .Link}}">{{ .Title}}</a></h3>
+		<h3 id="{{ .Title}}"><a href="{{ .Link}}" target="_blank">{{ .Title}}</a></h3>
 		<blockquote>
 		  <p>{{ .Txt}}</p>
 		</blockquote>

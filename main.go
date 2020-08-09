@@ -2,12 +2,21 @@ package main
 
 import (
 	"log"
+	"net/http"
+	"time"
 
-	"github.com/xmdhs/hidethread/get"
+	"github.com/xmdhs/hidethread/web"
 )
 
 func main() {
-	log.Println("开始")
-	get.Range(0, 1092244, 5)
-	log.Println("结束")
+	r := http.NewServeMux()
+	r.HandleFunc("/", web.WebRoot)
+	r.HandleFunc("/style.css", web.Style)
+	s := http.Server{
+		Addr:         ":8080",
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 12 * time.Second,
+		Handler:      r,
+	}
+	log.Println(s.ListenAndServe())
 }

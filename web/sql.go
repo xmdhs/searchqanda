@@ -36,6 +36,7 @@ func search(txt, offset string) ([]resultslist, error) {
 		l = append(l, `%`+v+`%`)
 	}
 	rows, err := stmt.Query(l...)
+	defer rows.Close()
 	if err != nil {
 		return []resultslist{}, err
 	}
@@ -58,8 +59,8 @@ func search(txt, offset string) ([]resultslist, error) {
 			for _, t := range list {
 				if strings.Contains(v.Message, t) {
 					a := strings.Index(v.Message, t)
-					aa := a - 65
-					b := a + 65
+					aa := a - 150
+					b := a + 150
 					if aa <= 0 {
 						aa = 0
 					}

@@ -6,7 +6,7 @@ import (
 )
 
 func TestSearch(t *testing.T) {
-	r, err := search("启动器", "0")
+	r, err := search("xmdhs", "0")
 	if err != nil {
 		t.Error(err)
 	}
