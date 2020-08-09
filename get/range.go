@@ -43,6 +43,7 @@ func Start(start, end int, id int) {
 		if err != nil {
 			s++
 			sqlup(s, id)
+			M.Unlock()
 			continue
 		}
 		if ishide(t) {
