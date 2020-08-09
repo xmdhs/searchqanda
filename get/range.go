@@ -114,7 +114,7 @@ func getnewtid() (tid string, err error) {
 	c := http.Client{
 		Timeout: 5 * time.Second,
 	}
-	reqs, err := http.NewRequest("GET", "https://www.mcbbs.net/forum.php?mod=guide&view=newthread&page=2", nil)
+	reqs, err := http.NewRequest("GET", "https://www.mcbbs.net/forum.php?mod=guide&view=newthread&page=3", nil)
 	if err != nil {
 		return
 	}
