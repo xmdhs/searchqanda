@@ -1,6 +1,7 @@
 package web
 
 import (
+	"io"
 	"net/http"
 	"strconv"
 )
@@ -39,7 +40,7 @@ func WebRoot(w http.ResponseWriter, req *http.Request) {
 	pase(w, r, query, page)
 }
 
-func e(w http.ResponseWriter, err error) {
+func e(w io.Writer, err error) {
 	w.Write([]byte(err.Error()))
 }
 

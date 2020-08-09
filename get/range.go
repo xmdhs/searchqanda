@@ -68,12 +68,12 @@ func Range(mintid, maxtid, thread int) {
 }
 
 func Startrange() {
-	start := sqlget(0)
+	start := sqlget(-2)
 	end := sqlget(-1)
 	if start == 0 {
-		_, err := db.Exec("INSERT INTO config VALUES (?,?)", 0, 0)
+		_, err := db.Exec("INSERT INTO config VALUES (?,?)", -2, 0)
 		if err != nil {
-			panic(err)
+			log.Println(err)
 		}
 	}
 	if end == 0 {
@@ -81,6 +81,7 @@ func Startrange() {
 		if err != nil {
 			panic(err)
 		}
+		end = 1092244
 	}
 	Range(start, end, 5)
 	tid, err := getnewtid()
@@ -92,7 +93,7 @@ func Startrange() {
 		log.Println(`tid == ""`)
 		return
 	}
-	_, err = db.Exec("UPDATE config SET i = ? WHERE id = ?", end, 0)
+	_, err = db.Exec("UPDATE config SET i = ? WHERE id = ?", end, -2)
 	if err != nil {
 		panic(err)
 	}
