@@ -28,7 +28,7 @@ func pase(w io.Writer, list []resultslist, Name, page string) {
 	if len(list) != 20 {
 		T = false
 	} else {
-		Link = "/s?q=" + Name + "&page=" + page
+		Link = "./s?q=" + Name + "&page=" + page
 	}
 	r := results{
 		Name: Name,

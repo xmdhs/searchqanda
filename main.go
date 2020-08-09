@@ -12,10 +12,10 @@ import (
 func main() {
 	go upsql()
 	r := http.NewServeMux()
-	r.HandleFunc("/", web.Index)
-	r.HandleFunc("/s", web.WebRoot)
-	r.HandleFunc("/style.css", web.Style)
-	r.HandleFunc("/hide", web.Hidethead)
+	r.HandleFunc("/search", web.Index)
+	r.HandleFunc("/search/s", web.WebRoot)
+	r.HandleFunc("/search/style.css", web.Style)
+	r.HandleFunc("/search/hide", web.Hidethead)
 	s := http.Server{
 		Addr:         ":8081",
 		ReadTimeout:  5 * time.Second,

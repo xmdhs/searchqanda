@@ -26,7 +26,7 @@ func Hidethead(w http.ResponseWriter, req *http.Request) {
 			rows.Scan(&fid)
 			var r resultslist
 			r.Title = fid
-			r.Link = "/hide?q=" + fid
+			r.Link = "./hide?q=" + fid
 			list = append(list, r)
 		}
 		r := results{
