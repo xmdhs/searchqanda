@@ -12,6 +12,7 @@ import (
 )
 
 var db *sql.DB
+var Db *sql.DB
 
 func init() {
 	var err error
@@ -25,6 +26,7 @@ func init() {
 	if err != nil {
 		log.Println(err)
 	}
+	Db = db
 }
 
 func sqlset(t *thread) {
@@ -93,6 +95,8 @@ type post struct {
 	Message  string
 	Authorid string
 }
+
+var Sqlget = sqlget
 
 func sqlget(id int) int {
 	stmt, err := db.Prepare(`SELECT i FROM config WHERE id = ?`)

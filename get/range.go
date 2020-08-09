@@ -1,8 +1,11 @@
 package get
 
 import (
+	"bufio"
 	"log"
+	"net/http"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 )
@@ -62,4 +65,69 @@ func Range(mintid, maxtid, thread int) {
 		go Start(b+mintid, a*(i+1)+mintid, i)
 	}
 	w.Wait()
+}
+
+func Startrange() {
+	start := sqlget(0)
+	end := sqlget(-1)
+	if start == 0 {
+		_, err := db.Exec("INSERT INTO config VALUES (?,?)", 0, 0)
+		if err != nil {
+			panic(err)
+		}
+	}
+	if end == 0 {
+		_, err := db.Exec("INSERT INTO config VALUES (?,?)", -1, 1092244)
+		if err != nil {
+			panic(err)
+		}
+	}
+	Range(start, end, 5)
+	tid, err := getnewtid()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if tid == "" {
+		log.Println(`tid == ""`)
+		return
+	}
+	_, err = db.Exec("UPDATE config SET i = ? WHERE id = ?", end, 0)
+	if err != nil {
+		panic(err)
+	}
+	_, err = db.Exec("UPDATE config SET i = ? WHERE id = ?", tid, -1)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func getnewtid() (tid string, err error) {
+	c := http.Client{
+		Timeout: 5 * time.Second,
+	}
+	reqs, err := http.NewRequest("GET", "https://www.mcbbs.net/forum.php?mod=guide&view=newthread&page=2", nil)
+	if err != nil {
+		return
+	}
+	reqs.Header.Set("Accept", "*/*")
+	reqs.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36")
+	rep, err := c.Do(reqs)
+	if rep != nil {
+		defer rep.Body.Close()
+	}
+	if err != nil {
+		return
+	}
+	bw := bufio.NewScanner(rep.Body)
+	for bw.Scan() {
+		if strings.Contains(bw.Text(), `target="_blank" class="xst" `) {
+			t := bw.Text()
+			a := strings.Index(t, `<a href="thread-`) + 16
+			b := strings.Index(t[a:], `-1-1.html" target`)
+			tid = t[a:][:b]
+			return
+		}
+	}
+	return
 }
