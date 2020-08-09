@@ -9,8 +9,6 @@ import (
 )
 
 func WebRoot(w http.ResponseWriter, req *http.Request) {
-	get.M.RLock()
-	defer get.M.RUnlock()
 	q := req.URL.Query()
 	var page, query string
 	if len(q["q"]) == 0 {
@@ -30,7 +28,9 @@ func WebRoot(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	page = strconv.FormatInt(i*20, 10)
+	get.M.RLock()
 	r, err := search(query, page)
+	get.M.RUnlock()
 	if len(r) == 0 {
 		http.NotFound(w, req)
 		return

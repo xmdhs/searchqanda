@@ -9,13 +9,12 @@ import (
 )
 
 func Hidethead(w http.ResponseWriter, req *http.Request) {
-	get.M.RLock()
-	defer get.M.RUnlock()
 	q := req.URL.Query()
 	if len(q["q"]) != 0 {
 		value := q["q"][0]
 		showhide(value, w)
 	} else {
+		get.M.RLock()
 		rows, err := get.Db.Query(`SELECT DISTINCT fid FROM hidethread`)
 		defer rows.Close()
 		if err != nil {
@@ -31,6 +30,7 @@ func Hidethead(w http.ResponseWriter, req *http.Request) {
 			r.Link = "./hide?q=" + fid
 			list = append(list, r)
 		}
+		get.M.RUnlock()
 		r := results{
 			Name: "无权查看的帖子",
 			List: list,

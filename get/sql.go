@@ -119,10 +119,7 @@ func sqlup(s, id int) {
 	stmt, err := db.Prepare("UPDATE config SET i = ? WHERE id = ?")
 	defer stmt.Close()
 	if err != nil {
-		time.Sleep(1 * time.Second)
-		stmt.Close()
-		log.Println(err)
-		sqlup(s, id)
+		panic(err)
 	}
 	stmt.Exec(s, id)
 }

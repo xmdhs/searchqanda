@@ -28,9 +28,10 @@ func Start(start, end int, id int) {
 		}
 	}
 	for s < end {
-		M.Lock()
 		time.Sleep(500 * time.Millisecond)
+		M.RLock()
 		s = sqlget(id)
+		M.RUnlock()
 		b, err := getjson(strconv.Itoa(s))
 		if err != nil {
 			log.Println(err, "tid", s)
@@ -38,6 +39,7 @@ func Start(start, end int, id int) {
 			continue
 		}
 		t, err := json2(b)
+		M.Lock()
 		if err != nil {
 			s++
 			sqlup(s, id)
