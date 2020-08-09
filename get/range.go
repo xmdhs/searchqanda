@@ -11,7 +11,6 @@ import (
 )
 
 var w sync.WaitGroup
-var M sync.RWMutex
 
 func Start(start, end int, id int) {
 	s := sqlget(id)
@@ -94,8 +93,7 @@ func Startrange() {
 		log.Println(`tid == ""`)
 		return
 	}
-	M.RLock()
-	defer M.RUnlock()
+
 	_, err = db.Exec("UPDATE config SET i = ? WHERE id = ?", end, -2)
 	if err != nil {
 		panic(err)

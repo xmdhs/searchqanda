@@ -9,8 +9,6 @@ import (
 )
 
 func Hidethead(w http.ResponseWriter, req *http.Request) {
-	get.M.RLock()
-	defer get.M.RUnlock()
 	q := req.URL.Query()
 	if len(q["q"]) != 0 {
 		value := q["q"][0]
@@ -47,8 +45,6 @@ func Hidethead(w http.ResponseWriter, req *http.Request) {
 }
 
 func showhide(fid string, w io.Writer) {
-	get.M.RLock()
-	defer get.M.RUnlock()
 	rows, err := get.Db.Query(`SELECT tid,dateline,authorid,author,subject FROM hidethread WHERE fid = ? ORDER BY tid DESC`, fid)
 	defer rows.Close()
 	if err != nil {

@@ -11,8 +11,6 @@ import (
 )
 
 func search(txt, offset string) ([]resultslist, error) {
-	get.M.RLock()
-	defer get.M.RUnlock()
 	if txt == "" {
 		return []resultslist{}, errors.New(`txt == ""`)
 	}

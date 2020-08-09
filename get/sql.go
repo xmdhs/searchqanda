@@ -30,8 +30,6 @@ func init() {
 }
 
 func sqlset(t *thread) {
-	M.Lock()
-	defer M.Unlock()
 	stmt, err := db.Prepare(`INSERT INTO hidethread VALUES (?,?,?,?,?,?,?,?,?)`)
 	defer stmt.Close()
 	if err != nil {
@@ -61,8 +59,6 @@ func sqlset(t *thread) {
 }
 
 func qasave(t *thread) {
-	M.Lock()
-	defer M.Unlock()
 	stmt, err := db.Prepare(`INSERT INTO qa VALUES (?,?,?,?)`)
 	defer stmt.Close()
 	if err != nil {
@@ -103,8 +99,6 @@ type post struct {
 var Sqlget = sqlget
 
 func sqlget(id int) int {
-	M.RLock()
-	defer M.RUnlock()
 	stmt, err := db.Prepare(`SELECT i FROM config WHERE id = ?`)
 	defer stmt.Close()
 	if err != nil {
@@ -122,12 +116,13 @@ func sqlget(id int) int {
 }
 
 func sqlup(s, id int) {
-	M.Lock()
-	defer M.Unlock()
 	stmt, err := db.Prepare("UPDATE config SET i = ? WHERE id = ?")
 	defer stmt.Close()
 	if err != nil {
-		panic(err)
+		stmt.Close()
+		log.Println(err)
+		time.Sleep(1 * time.Second)
+		sqlup(s, id)
 	}
 	stmt.Exec(s, id)
 }
