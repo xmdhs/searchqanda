@@ -23,7 +23,7 @@ func search(txt, offset string) ([]resultslist, error) {
 	sqline.WriteString(` ORDER BY tid DESC`)
 	sqline.WriteString(` LIMIT 20 OFFSET ` + offset)
 	ctx, cancel := context.WithCancel(context.TODO())
-	time.AfterFunc(4*time.Second, func() {
+	time.AfterFunc(6*time.Second, func() {
 		cancel()
 	})
 	stmt, err := get.Db.PrepareContext(ctx, sqline.String())
