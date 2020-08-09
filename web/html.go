@@ -44,7 +44,7 @@ const (
 	<body>
 	  <div class="container-lg px-3 my-5 markdown-body">
 		<h1 id="问答版搜索">问答版搜索</h1>
-		<form action="/s" target="_blank"><input type="text" name="q"></form>
+		<form action="/search/s" target="_blank"><input type="text" name="q"></form>
 		<br/>
 		<hr/>
 		<details>
