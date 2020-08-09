@@ -26,16 +26,11 @@ func search(txt, offset string) ([]resultslist, error) {
 	time.AfterFunc(6*time.Second, func() {
 		cancel()
 	})
-	stmt, err := get.Db.PrepareContext(ctx, sqline.String())
-	defer stmt.Close()
-	if err != nil {
-		return []resultslist{}, err
-	}
 	l := make([]interface{}, 0, len(list))
 	for _, v := range list {
 		l = append(l, `%`+v+`%`)
 	}
-	rows, err := stmt.QueryContext(ctx, l...)
+	rows, err := get.Db.QueryContext(ctx, sqline.String(), l...)
 	defer rows.Close()
 	if err != nil {
 		return []resultslist{}, err
