@@ -35,7 +35,7 @@ func search(txt, offset string) ([]resultslist, error) {
 	for _, v := range list {
 		l = append(l, `%`+v+`%`)
 	}
-	rows, err := stmt.Query(l...)
+	rows, err := stmt.QueryContext(ctx, l...)
 	defer rows.Close()
 	if err != nil {
 		return []resultslist{}, err
