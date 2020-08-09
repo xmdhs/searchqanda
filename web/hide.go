@@ -9,6 +9,8 @@ import (
 )
 
 func Hidethead(w http.ResponseWriter, req *http.Request) {
+	get.M.RLock()
+	defer get.M.RUnlock()
 	q := req.URL.Query()
 	if len(q["q"]) != 0 {
 		value := q["q"][0]

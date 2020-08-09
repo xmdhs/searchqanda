@@ -11,6 +11,7 @@ import (
 )
 
 var w sync.WaitGroup
+var M sync.RWMutex
 
 func Start(start, end int, id int) {
 	s := sqlget(id)
@@ -27,6 +28,7 @@ func Start(start, end int, id int) {
 		}
 	}
 	for s < end {
+		M.Lock()
 		time.Sleep(500 * time.Millisecond)
 		s = sqlget(id)
 		b, err := getjson(strconv.Itoa(s))
@@ -48,6 +50,7 @@ func Start(start, end int, id int) {
 		}
 		s++
 		sqlup(s, id)
+		M.Unlock()
 	}
 	w.Done()
 }

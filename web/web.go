@@ -4,9 +4,13 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+
+	"github.com/xmdhs/hidethread/get"
 )
 
 func WebRoot(w http.ResponseWriter, req *http.Request) {
+	get.M.RLock()
+	defer get.M.RUnlock()
 	q := req.URL.Query()
 	var page, query string
 	if len(q["q"]) == 0 {
