@@ -3,6 +3,7 @@ package web
 import (
 	"html/template"
 	"io"
+	"log"
 )
 
 func Genhtml() {
@@ -38,10 +39,12 @@ func pase(w io.Writer, list []resultslist, Name, page string) {
 	}
 	t, err := template.New("page").Parse(html)
 	if err != nil {
-		panic(err)
+		log.Println(err)
+		return
 	}
 	err = t.Execute(w, r)
 	if err != nil {
-		panic(err)
+		log.Println(err)
+		return
 	}
 }
