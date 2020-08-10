@@ -55,7 +55,7 @@ func showhide(fid string, w io.Writer) {
 	if fid != "0" {
 		rows, err = get.Db.Query(`SELECT tid,dateline,authorid,author,subject FROM hidethread WHERE fid = ? ORDER BY tid DESC`, fid)
 	} else {
-		rows, err = get.Db.Query(`SELECT tid,dateline,authorid,author,subject FROM hidethread WHERE ORDER BY tid DESC`, fid)
+		rows, err = get.Db.Query(`SELECT tid,dateline,authorid,author,subject FROM hidethread ORDER BY tid DESC`)
 	}
 	defer rows.Close()
 	if err != nil {
