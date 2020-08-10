@@ -25,7 +25,7 @@ func Hidethead(w http.ResponseWriter, req *http.Request) {
 		list := make([]resultslist, 0)
 		var rr resultslist
 		rr.Title = "ALL"
-		rr.Link = "./hide?q=0"
+		rr.Link = "./hide?q=all"
 		list = append(list, rr)
 		for rows.Next() {
 			rows.Scan(&fid)
@@ -52,7 +52,7 @@ func Hidethead(w http.ResponseWriter, req *http.Request) {
 func showhide(fid string, w io.Writer) {
 	var rows *sql.Rows
 	var err error
-	if fid != "0" {
+	if fid != "all" {
 		rows, err = get.Db.Query(`SELECT tid,dateline,authorid,author,subject FROM hidethread WHERE fid = ? ORDER BY tid DESC`, fid)
 	} else {
 		rows, err = get.Db.Query(`SELECT tid,dateline,authorid,author,subject FROM hidethread ORDER BY tid DESC`)
