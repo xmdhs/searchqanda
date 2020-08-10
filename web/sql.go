@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"regexp"
 	"strings"
 	"time"
 
@@ -53,16 +54,18 @@ func search(txt, offset string) ([]resultslist, error) {
 		for _, v := range p {
 			for _, t := range list {
 				if strings.Contains(strings.ToTitle(v.Message), strings.ToTitle(t)) {
-					a := strings.Index(strings.ToTitle(v.Message), strings.ToTitle(t))
+					re, _ := regexp.Compile("\\<[\\S\\s]+?\\>")
+					src := re.ReplaceAllString(v.Message, "")
+					a := strings.Index(strings.ToTitle(src), strings.ToTitle(t))
 					aa := a - 150
 					b := a + 150
 					if aa <= 0 {
 						aa = 0
 					}
-					if b >= len(v.Message) {
-						b = len(v.Message) - 1
+					if b >= len(src) {
+						b = len(src) - 1
 					}
-					tt = v.Message[aa:b]
+					tt = src[aa:b]
 					tt = strings.ToValidUTF8(tt, "")
 					break
 				}
