@@ -66,6 +66,12 @@ func search(txt, offset string) ([]resultslist, error) {
 					if b >= len(src) {
 						b = len(src) - 1
 					}
+					if b == -1 {
+						b = 0
+					}
+					if aa == -1 {
+						aa = 0
+					}
 					tt = src[aa:b]
 					tt = strings.ToValidUTF8(tt, "")
 					break
