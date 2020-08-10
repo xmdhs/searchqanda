@@ -1,6 +1,7 @@
 package web
 
 import (
+	"database/sql"
 	"html/template"
 	"io"
 	"net/http"
@@ -22,6 +23,10 @@ func Hidethead(w http.ResponseWriter, req *http.Request) {
 		}
 		var fid string
 		list := make([]resultslist, 0)
+		var rr resultslist
+		rr.Title = "ALL"
+		rr.Link = "./hide?q=0"
+		list = append(list, rr)
 		for rows.Next() {
 			rows.Scan(&fid)
 			var r resultslist
@@ -45,7 +50,13 @@ func Hidethead(w http.ResponseWriter, req *http.Request) {
 }
 
 func showhide(fid string, w io.Writer) {
-	rows, err := get.Db.Query(`SELECT tid,dateline,authorid,author,subject FROM hidethread WHERE fid = ? ORDER BY tid DESC`, fid)
+	var rows *sql.Rows
+	var err error
+	if fid != "0" {
+		rows, err = get.Db.Query(`SELECT tid,dateline,authorid,author,subject FROM hidethread WHERE fid = ? ORDER BY tid DESC`, fid)
+	} else {
+		rows, err = get.Db.Query(`SELECT tid,dateline,authorid,author,subject FROM hidethread WHERE ORDER BY tid DESC`, fid)
+	}
 	defer rows.Close()
 	if err != nil {
 		e(w, err)
