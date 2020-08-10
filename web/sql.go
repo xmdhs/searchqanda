@@ -52,8 +52,8 @@ func search(txt, offset string) ([]resultslist, error) {
 		var tt string
 		for _, v := range p {
 			for _, t := range list {
-				if strings.Contains(v.Message, t) {
-					a := strings.Index(v.Message, t)
+				if strings.Contains(strings.ToTitle(v.Message), strings.ToTitle(t)) {
+					a := strings.Index(strings.ToTitle(v.Message), strings.ToTitle(t))
 					aa := a - 150
 					b := a + 150
 					if aa <= 0 {
@@ -63,6 +63,7 @@ func search(txt, offset string) ([]resultslist, error) {
 						b = len(v.Message) - 1
 					}
 					tt = v.Message[aa:b]
+					tt = strings.ToValidUTF8(tt, "")
 					break
 				}
 			}
