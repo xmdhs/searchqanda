@@ -62,7 +62,7 @@ func sqlset(t *thread) {
 }
 
 func qasave(t *thread) {
-	x := gojieba.NewJieba(`dictionary.txt`)
+	x := gojieba.NewJieba(`./dictionary.txt`)
 	defer x.Free()
 	stmt, err := db.Prepare(`INSERT INTO qafts5 VALUES (?,?,?)`)
 	defer stmt.Close()
