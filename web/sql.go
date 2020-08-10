@@ -69,7 +69,6 @@ func search(txt, offset string) ([]resultslist, error) {
 						aa = 0
 					}
 					tt = src[aa:b]
-					tt = strings.ToValidUTF8(tt, "")
 					break
 				}
 				if len(tt) == 0 {
@@ -81,7 +80,7 @@ func search(txt, offset string) ([]resultslist, error) {
 				}
 			}
 		}
-
+		tt = strings.ToValidUTF8(tt, "")
 		l := resultslist{
 			Title: subject,
 			Link:  `https://www.mcbbs.net/thread-` + tid + `-1-1.html`,
