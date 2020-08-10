@@ -19,7 +19,7 @@ func main() {
 	s := http.Server{
 		Addr:         ":8081",
 		ReadTimeout:  5 * time.Second,
-		WriteTimeout: 20 * time.Second,
+		WriteTimeout: 40 * time.Second,
 		Handler:      r,
 	}
 	log.Println(s.ListenAndServe())
