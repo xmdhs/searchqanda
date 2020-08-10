@@ -16,22 +16,11 @@ func search(txt, offset string) ([]resultslist, error) {
 		return []resultslist{}, errors.New(`txt == ""`)
 	}
 	list := strings.Split(txt, " ")
-	sqline := strings.Builder{}
-	sqline.WriteString(`SELECT tid,subject,txt FROM qa WHERE txt LIKE ?`)
-	for i := 1; i < len(list); i++ {
-		sqline.WriteString(` AND txt LIKE ?`)
-	}
-	sqline.WriteString(` ORDER BY tid DESC`)
-	sqline.WriteString(` LIMIT 20 OFFSET ` + offset)
 	ctx, cancel := context.WithCancel(context.TODO())
-	time.AfterFunc(30*time.Second, func() {
+	time.AfterFunc(10*time.Second, func() {
 		cancel()
 	})
-	l := make([]interface{}, 0, len(list))
-	for _, v := range list {
-		l = append(l, `%`+v+`%`)
-	}
-	rows, err := get.Db.QueryContext(ctx, sqline.String(), l...)
+	rows, err := get.Db.QueryContext(ctx, `SELECT key,source FROM qafts5 WHERE source MATCH ? ORDER BY rank DESC`, txt)
 	defer rows.Close()
 	if err != nil {
 		return []resultslist{}, err

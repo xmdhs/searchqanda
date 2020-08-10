@@ -4,15 +4,19 @@ import (
 	"database/sql"
 	"encoding/json"
 	"log"
+	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
+	"github.com/go-ego/gse"
 	//数据库驱动
 	_ "github.com/mattn/go-sqlite3"
 )
 
 var db *sql.DB
 var Db *sql.DB
+var seg gse.Segmenter
 
 func init() {
 	var err error
@@ -23,11 +27,12 @@ func init() {
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS hidethread(tid INT PRIMARY KEY NOT NULL,fid TEXT NOT NULL,authorid TEXT NOT NULL,author TEXT NOT NULL,views INT NOT NULL,dateline TEXT NOT NULL,lastpost TEXT NOT NULL,lastposter TEXT NOT NULL,subject TEXT NOT NULL)`)
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS qa(tid INT PRIMARY KEY NOT NULL,fid TEXT NOT NULL,subject TEXT NOT NULL,txt TEXT NOT NULL)`)
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS config(id INT PRIMARY KEY NOT NULL,i INT NOT NULL)`)
-	_, err = db.Exec(`CREATE VIRTUAL TABLE IF NOT EXISTS idx USING fts5(key, source, tokenize=icu)`)
+	_, err = db.Exec(`CREATE VIRTUAL TABLE IF NOT EXISTS qafts5 USING fts5(key, source)`)
 	if err != nil {
 		log.Println(err)
 	}
 	Db = db
+	seg.LoadDict(`dictionary.txt`)
 }
 
 func sqlset(t *thread) {
@@ -74,6 +79,12 @@ func qasave(t *thread) {
 		p := post{}
 		m := v.(map[string]interface{})
 		k, ok := m["message"].(string)
+		re, _ := regexp.Compile("\\<[\\S\\s]+?\\>")
+		k = re.ReplaceAllString(k, "")
+		k = strings.ReplaceAll(k, "&nbsp;", "")
+
+		ks := seg.CutSearch(k, true)
+		k = strings.Join(ks, "/")
 		p.Message = k
 		k, ok = m["authorid"].(string)
 		p.Authorid = k
