@@ -25,9 +25,8 @@ func init() {
 		panic(err)
 	}
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS hidethread(tid INT PRIMARY KEY NOT NULL,fid TEXT NOT NULL,authorid TEXT NOT NULL,author TEXT NOT NULL,views INT NOT NULL,dateline TEXT NOT NULL,lastpost TEXT NOT NULL,lastposter TEXT NOT NULL,subject TEXT NOT NULL)`)
-	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS qa(tid INT PRIMARY KEY NOT NULL,fid TEXT NOT NULL,subject TEXT NOT NULL,txt TEXT NOT NULL)`)
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS config(id INT PRIMARY KEY NOT NULL,i INT NOT NULL)`)
-	_, err = db.Exec(`CREATE VIRTUAL TABLE IF NOT EXISTS qafts5 USING fts5(key, source)`)
+	_, err = db.Exec(`CREATE VIRTUAL TABLE IF NOT EXISTS qafts5 USING fts5(key,subject, source)`)
 	if err != nil {
 		log.Println(err)
 	}
@@ -65,13 +64,12 @@ func sqlset(t *thread) {
 }
 
 func qasave(t *thread) {
-	stmt, err := db.Prepare(`INSERT INTO qa VALUES (?,?,?,?)`)
+	stmt, err := db.Prepare(`INSERT INTO qafts5 VALUES (?,?,?)`)
 	defer stmt.Close()
 	if err != nil {
 		panic(err)
 	}
 	tid := t.Variables.Thread["tid"].(string)
-	fid := t.Variables.Thread["fid"].(string)
 	subject := t.Variables.Thread["subject"].(string)
 	temptxt := t.Variables.Postlist
 	tt := make([]post, 0, len(temptxt))
@@ -96,7 +94,7 @@ func qasave(t *thread) {
 	if err != nil {
 		panic(err)
 	}
-	_, err = stmt.Exec(tid, fid, subject, string(b))
+	_, err = stmt.Exec(tid, subject, string(b))
 	if err != nil {
 		log.Println(err, t)
 	}

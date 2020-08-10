@@ -20,7 +20,12 @@ func search(txt, offset string) ([]resultslist, error) {
 	time.AfterFunc(10*time.Second, func() {
 		cancel()
 	})
-	rows, err := get.Db.QueryContext(ctx, `SELECT key,source FROM qafts5 WHERE source MATCH ? ORDER BY rank DESC`, txt)
+	txt = replace(txt)
+	if txt == "" {
+		return []resultslist{}, errors.New(`""`)
+	}
+	txt = "'" + txt + "'"
+	rows, err := get.Db.QueryContext(ctx, `SELECT key,subject,source FROM qafts5 WHERE qafts5 MATCH `+txt+` ORDER BY rank DESC`)
 	defer rows.Close()
 	if err != nil {
 		return []resultslist{}, err
@@ -42,13 +47,15 @@ func search(txt, offset string) ([]resultslist, error) {
 		var tt string
 		for _, v := range p {
 			for _, t := range list {
+				t = strings.ReplaceAll(t, `"`, "")
+				re, _ := regexp.Compile("\\<[\\S\\s]+?\\>")
+				src := re.ReplaceAllString(v.Message, "")
+				src = strings.ReplaceAll(src, "&nbsp;", "")
+				src = strings.ReplaceAll(src, "/", "")
 				if strings.Contains(strings.ToTitle(v.Message), strings.ToTitle(t)) {
-					re, _ := regexp.Compile("\\<[\\S\\s]+?\\>")
-					src := re.ReplaceAllString(v.Message, "")
-					src = strings.ReplaceAll(src, "&nbsp;", "")
 					a := strings.Index(strings.ToTitle(src), strings.ToTitle(t))
-					aa := a - 150
-					b := a + 150
+					aa := a - 200
+					b := a + 200
 					if aa <= 0 {
 						aa = 0
 					}
@@ -65,8 +72,16 @@ func search(txt, offset string) ([]resultslist, error) {
 					tt = strings.ToValidUTF8(tt, "")
 					break
 				}
+				if len(tt) == 0 {
+					if len(src) <= 500 {
+						tt = src
+					} else {
+						tt = src[0:500]
+					}
+				}
 			}
 		}
+
 		l := resultslist{
 			Title: subject,
 			Link:  `https://www.mcbbs.net/thread-` + tid + `-1-1.html`,
@@ -80,4 +95,30 @@ func search(txt, offset string) ([]resultslist, error) {
 type post struct {
 	Message  string
 	Authorid string
+}
+
+func replace(txt string) string {
+	txt = strings.ReplaceAll(txt, " -", "NOT ")
+	txt = strings.ReplaceAll(txt, ";", "")
+	txt = strings.ReplaceAll(txt, "'", "")
+	txt = strings.ReplaceAll(txt, ";", "")
+	txt = strings.ReplaceAll(txt, ",", "")
+	txt = strings.ReplaceAll(txt, "?", "")
+	txt = strings.ReplaceAll(txt, "<", "")
+	txt = strings.ReplaceAll(txt, ">", "")
+	txt = strings.ReplaceAll(txt, "@", "")
+	txt = strings.ReplaceAll(txt, "=", "")
+	txt = strings.ReplaceAll(txt, "+", "")
+	txt = strings.ReplaceAll(txt, "*", "")
+	txt = strings.ReplaceAll(txt, "&", "")
+	txt = strings.ReplaceAll(txt, "#", "")
+	txt = strings.ReplaceAll(txt, "%", "")
+	txt = strings.ReplaceAll(txt, "$", "")
+	txt = strings.ReplaceAll(txt, `\`, "")
+	txt = strings.ReplaceAll(txt, `(`, "")
+	txt = strings.ReplaceAll(txt, `)`, "")
+	txt = strings.ReplaceAll(txt, ".", "+")
+	txt = strings.ReplaceAll(txt, "/", "+")
+
+	return txt
 }

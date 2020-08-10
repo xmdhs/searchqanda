@@ -4,8 +4,6 @@ import (
 	"io"
 	"net/http"
 	"strconv"
-
-	"github.com/xmdhs/hidethread/get"
 )
 
 func WebRoot(w http.ResponseWriter, req *http.Request) {
@@ -28,15 +26,13 @@ func WebRoot(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	page = strconv.FormatInt(i*20, 10)
-	get.M.RLock()
 	r, err := search(query, page)
-	get.M.RUnlock()
-	if len(r) == 0 {
-		http.NotFound(w, req)
-		return
-	}
 	if err != nil {
 		e(w, err)
+		return
+	}
+	if len(r) == 0 {
+		http.NotFound(w, req)
 		return
 	}
 	i++
