@@ -56,6 +56,7 @@ func search(txt, offset string) ([]resultslist, error) {
 				if strings.Contains(strings.ToTitle(v.Message), strings.ToTitle(t)) {
 					re, _ := regexp.Compile("\\<[\\S\\s]+?\\>")
 					src := re.ReplaceAllString(v.Message, "")
+					src = strings.ReplaceAll(src, "&nbsp;", "")
 					a := strings.Index(strings.ToTitle(src), strings.ToTitle(t))
 					aa := a - 150
 					b := a + 150
