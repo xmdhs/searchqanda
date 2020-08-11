@@ -177,9 +177,7 @@ func cutsearch(src string) string {
 	}
 	for i, v := range l {
 		if remove {
-			l[i] = `NOT "` + v + `"`
-		} else {
-			l[i] = `"` + v + `"`
+			l[i] = `NOT ` + v
 		}
 	}
 	src = strings.Join(l, " ")
