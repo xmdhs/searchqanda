@@ -64,9 +64,11 @@ func e(w io.Writer, err error) {
 
 func Style(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("content-type", "text/css")
+	w.Header().Set("Cache-Control", "max-age=6000")
 	w.Write([]byte(css))
 }
 
 func Index(w http.ResponseWriter, req *http.Request) {
+	w.Header().Set("Cache-Control", "max-age=6000")
 	w.Write([]byte(index))
 }
