@@ -10,12 +10,14 @@ import (
 	"time"
 
 	//数据库驱动
+	"github.com/go-ego/gse"
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/yanyiwu/gojieba"
 )
 
 var db *sql.DB
 var Db *sql.DB
+
+var Seg gse.Segmenter
 
 func init() {
 	var err error
@@ -30,6 +32,7 @@ func init() {
 		log.Println(err)
 	}
 	Db = db
+	Seg.LoadDict(`dictionary.txt`)
 }
 
 func sqlset(t *thread) {
@@ -61,8 +64,6 @@ func sqlset(t *thread) {
 	}
 }
 
-var X = gojieba.NewJieba(`dict/jieba.dict.utf8`, `dict/hmm_model.utf8`, `dict/user.dict.utf8`, `dict/idf.utf8`, `dict/stop_words.utf8`)
-
 func qasave(t *thread) {
 	stmt, err := db.Prepare(`INSERT INTO qafts5 VALUES (?,?,?)`)
 	defer stmt.Close()
@@ -81,7 +82,7 @@ func qasave(t *thread) {
 		k = re.ReplaceAllString(k, "")
 		k = strings.ReplaceAll(k, "&nbsp;", "")
 
-		ks := X.CutForSearch(k, true)
+		ks := Seg.CutSearch(k, true)
 		k = strings.Join(ks, "/")
 		p.Message = k
 		k, ok = m["authorid"].(string)
@@ -95,6 +96,7 @@ func qasave(t *thread) {
 		panic(err)
 	}
 	_, err = stmt.Exec(tid, subject, string(b))
+	log.Println(tid)
 	if err != nil {
 		log.Println(err, t)
 	}
@@ -105,8 +107,6 @@ type post struct {
 	Message  string
 	Authorid string
 }
-
-var Sqlget = sqlget
 
 func sqlget(id int) int {
 	stmt, err := db.Prepare(`SELECT i FROM config WHERE id = ?`)

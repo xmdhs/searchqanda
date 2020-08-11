@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/xmdhs/hidethread/get"
-	"github.com/yanyiwu/gojieba"
 )
 
 func search(txt, offset string) ([]resultslist, error) {
@@ -23,7 +22,7 @@ func search(txt, offset string) ([]resultslist, error) {
 	list := cut(txt)
 	for i, v := range list {
 		v = replace(v)
-		list[i] = cutsearch(get.X, v)
+		list[i] = cutsearch(v)
 	}
 	ctx, cancel := context.WithCancel(context.TODO())
 	time.AfterFunc(10*time.Second, func() {
@@ -158,7 +157,7 @@ func cut(txt string) []string {
 	return ss
 }
 
-func cutsearch(x *gojieba.Jieba, src string) string {
+func cutsearch(src string) string {
 	t, remove := false, false
 	if strings.HasPrefix(src, "-") {
 		src = strings.TrimPrefix(src, `-`)
@@ -168,7 +167,7 @@ func cutsearch(x *gojieba.Jieba, src string) string {
 		src = strings.Trim(src, `"`)
 		t = true
 	}
-	l := x.CutForSearch(src, true)
+	l := get.Seg.CutSearch(src, true)
 	if t {
 		src = strings.Join(l, " ")
 		if remove {
