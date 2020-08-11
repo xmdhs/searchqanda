@@ -158,38 +158,24 @@ func cut(txt string) []string {
 }
 
 func cutsearch(src string) string {
-	t, remove := false, false
+	remove := false
 	if strings.HasPrefix(src, "-") {
 		src = strings.TrimPrefix(src, `-`)
 		remove = true
 	}
-	if strings.HasPrefix(src, `"`) {
-		src = strings.Trim(src, `"`)
-		t = true
-	}
 	src = strings.ReplaceAll(src, "-", " ")
 	l := get.Seg.CutSearch(src, true)
-	for i, v := range l {
-		l[i] = strings.Trim(v, " ")
-	}
 	ll := make([]string, 0)
+
 	for _, v := range l {
+		v = strings.Trim(v, " ")
 		if v != "" {
 			ll = append(ll, v)
 		}
 	}
-	if t {
-		src = strings.Join(ll, " ")
-		if remove {
-			return `NOT "` + src + `"`
-		}
-		return `"` + src + `"`
-	}
-	for i, v := range ll {
-		if remove {
-			ll[i] = `NOT ` + v
-		}
-	}
 	src = strings.Join(ll, " ")
-	return src
+	if remove {
+		return `NOT "` + src + `"`
+	}
+	return `"` + src + `"`
 }
