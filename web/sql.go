@@ -97,7 +97,7 @@ type post struct {
 }
 
 func replace(txt string) string {
-	txt = strings.ReplaceAll(txt, "*", "")
+	txt = strings.ReplaceAll(txt, "+", "")
 	txt = strings.ReplaceAll(txt, ";", "+")
 	txt = strings.ReplaceAll(txt, "'", "+")
 	txt = strings.ReplaceAll(txt, ",", "+")
@@ -107,7 +107,6 @@ func replace(txt string) string {
 	txt = strings.ReplaceAll(txt, ">", "+")
 	txt = strings.ReplaceAll(txt, "@", "+")
 	txt = strings.ReplaceAll(txt, "=", "+")
-	txt = strings.ReplaceAll(txt, "+", "+")
 	txt = strings.ReplaceAll(txt, "*", "+")
 	txt = strings.ReplaceAll(txt, ":", "+")
 	txt = strings.ReplaceAll(txt, "&", "+")
