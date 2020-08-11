@@ -103,26 +103,26 @@ type post struct {
 
 func replace(txt string) string {
 	txt = strings.ReplaceAll(txt, "+", "")
-	txt = strings.ReplaceAll(txt, ";", "+")
-	txt = strings.ReplaceAll(txt, "'", "+")
-	txt = strings.ReplaceAll(txt, ",", "+")
-	txt = strings.ReplaceAll(txt, "?", "+")
-	txt = strings.ReplaceAll(txt, "--", "+")
-	txt = strings.ReplaceAll(txt, "<", "+")
-	txt = strings.ReplaceAll(txt, ">", "+")
-	txt = strings.ReplaceAll(txt, "@", "+")
-	txt = strings.ReplaceAll(txt, "=", "+")
-	txt = strings.ReplaceAll(txt, "*", "+")
-	txt = strings.ReplaceAll(txt, ":", "+")
-	txt = strings.ReplaceAll(txt, "&", "+")
-	txt = strings.ReplaceAll(txt, "#", "+")
-	txt = strings.ReplaceAll(txt, "%", "+")
-	txt = strings.ReplaceAll(txt, "$", "+")
-	txt = strings.ReplaceAll(txt, `\`, "+")
-	txt = strings.ReplaceAll(txt, `(`, "+")
-	txt = strings.ReplaceAll(txt, `)`, "+")
-	txt = strings.ReplaceAll(txt, ".", "+")
-	txt = strings.ReplaceAll(txt, "/", "+")
+	txt = strings.ReplaceAll(txt, ";", " ")
+	txt = strings.ReplaceAll(txt, "'", " ")
+	txt = strings.ReplaceAll(txt, ",", " ")
+	txt = strings.ReplaceAll(txt, "?", " ")
+	txt = strings.ReplaceAll(txt, "--", " ")
+	txt = strings.ReplaceAll(txt, "<", " ")
+	txt = strings.ReplaceAll(txt, ">", " ")
+	txt = strings.ReplaceAll(txt, "@", " ")
+	txt = strings.ReplaceAll(txt, "=", " ")
+	txt = strings.ReplaceAll(txt, "*", " ")
+	txt = strings.ReplaceAll(txt, ":", " ")
+	txt = strings.ReplaceAll(txt, "&", " ")
+	txt = strings.ReplaceAll(txt, "#", " ")
+	txt = strings.ReplaceAll(txt, "%", " ")
+	txt = strings.ReplaceAll(txt, "$", " ")
+	txt = strings.ReplaceAll(txt, `\`, " ")
+	txt = strings.ReplaceAll(txt, `(`, " ")
+	txt = strings.ReplaceAll(txt, `)`, " ")
+	txt = strings.ReplaceAll(txt, ".", " ")
+	txt = strings.ReplaceAll(txt, "/", " ")
 
 	return txt
 }
@@ -167,20 +167,29 @@ func cutsearch(src string) string {
 		src = strings.Trim(src, `"`)
 		t = true
 	}
-	src = strings.ReplaceAll(src, "-", "+")
+	src = strings.ReplaceAll(src, "-", " ")
 	l := get.Seg.CutSearch(src, true)
+	for i, v := range l {
+		l[i] = strings.Trim(v, " ")
+	}
+	ll := make([]string, 0)
+	for _, v := range l {
+		if v != "" {
+			ll = append(ll, v)
+		}
+	}
 	if t {
-		src = strings.Join(l, " ")
+		src = strings.Join(ll, " ")
 		if remove {
 			return `NOT "` + src + `"`
 		}
 		return `"` + src + `"`
 	}
-	for i, v := range l {
+	for i, v := range ll {
 		if remove {
-			l[i] = `NOT ` + v
+			ll[i] = `NOT ` + v
 		}
 	}
-	src = strings.Join(l, " ")
+	src = strings.Join(ll, " ")
 	return src
 }
