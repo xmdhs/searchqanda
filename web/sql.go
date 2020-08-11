@@ -9,21 +9,29 @@ import (
 	"time"
 
 	"github.com/xmdhs/hidethread/get"
+	"github.com/yanyiwu/gojieba"
 )
 
 func search(txt, offset string) ([]resultslist, error) {
 	if txt == "" {
+		return []resultslist{}, errors.New(`""`)
+	}
+	x := gojieba.NewJieba(`dict/jieba.dict.utf8`, `dict/hmm_model.utf8`, `dict/user.dict.utf8`, `dict/idf.utf8`, `dict/stop_words.utf8`)
+	defer x.Free()
+
+	if txt == "" {
 		return []resultslist{}, errors.New(`txt == ""`)
 	}
-	list := strings.Split(txt, " ")
+	list := cut(txt)
+	for i, v := range list {
+		v = replace(v)
+		list[i] = cutsearch(x, v)
+	}
 	ctx, cancel := context.WithCancel(context.TODO())
 	time.AfterFunc(10*time.Second, func() {
 		cancel()
 	})
-	txt = replace(txt)
-	if txt == "" {
-		return []resultslist{}, errors.New(`""`)
-	}
+	txt = strings.Join(list, " ")
 	txt = "'" + txt + "'"
 	rows, err := get.Db.QueryContext(ctx, `SELECT key,subject,source FROM qafts5 WHERE qafts5 MATCH `+txt+` ORDER BY rank DESC LIMIT 20 OFFSET ?`, offset)
 	defer rows.Close()
@@ -116,10 +124,67 @@ func replace(txt string) string {
 	txt = strings.ReplaceAll(txt, `\`, "+")
 	txt = strings.ReplaceAll(txt, `(`, "+")
 	txt = strings.ReplaceAll(txt, `)`, "+")
-	txt = strings.ReplaceAll(txt, " -", " NOT ")
 	txt = strings.ReplaceAll(txt, ".", "+")
-	txt = strings.ReplaceAll(txt, "-", "+")
 	txt = strings.ReplaceAll(txt, "/", "+")
 
 	return txt
+}
+
+func cut(txt string) []string {
+	ss := make([]string, 0)
+	txt = txt + " "
+	s := strings.Builder{}
+	t := true
+	for _, v := range txt {
+		if v == 45 {
+			s.WriteRune(v)
+			continue
+		}
+		if v == 34 {
+			if t {
+				t = false
+			} else {
+				t = true
+			}
+		}
+		s.WriteRune(v)
+		if v == 32 && t {
+			t := strings.Trim(s.String(), " ")
+			ss = append(ss, t)
+			s.Reset()
+		}
+	}
+	if len(ss) == 0 {
+		ss = append(ss, txt)
+	}
+	return ss
+}
+
+func cutsearch(x *gojieba.Jieba, src string) string {
+	t, remove := false, false
+	if strings.HasPrefix(src, "-") {
+		src = strings.TrimPrefix(src, `-`)
+		remove = true
+	}
+	if strings.HasPrefix(src, `"`) {
+		src = strings.Trim(src, `"`)
+		t = true
+	}
+	l := x.CutForSearch(src, true)
+	if t {
+		src = strings.Join(l, " ")
+		if remove {
+			return `NOT "` + src + `"`
+		}
+		return `"` + src + `"`
+	}
+	for i, v := range l {
+		if remove {
+			l[i] = `NOT "` + v + `"`
+		} else {
+			l[i] = `"` + v + `"`
+		}
+	}
+	src = strings.Join(l, " ")
+	return src
 }
