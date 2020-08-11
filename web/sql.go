@@ -16,8 +16,6 @@ func search(txt, offset string) ([]resultslist, error) {
 	if txt == "" {
 		return []resultslist{}, errors.New(`""`)
 	}
-	x := gojieba.NewJieba(`dict/jieba.dict.utf8`, `dict/hmm_model.utf8`, `dict/user.dict.utf8`, `dict/idf.utf8`, `dict/stop_words.utf8`)
-	defer x.Free()
 
 	if txt == "" {
 		return []resultslist{}, errors.New(`txt == ""`)
@@ -25,7 +23,7 @@ func search(txt, offset string) ([]resultslist, error) {
 	list := cut(txt)
 	for i, v := range list {
 		v = replace(v)
-		list[i] = cutsearch(x, v)
+		list[i] = cutsearch(get.X, v)
 	}
 	ctx, cancel := context.WithCancel(context.TODO())
 	time.AfterFunc(10*time.Second, func() {

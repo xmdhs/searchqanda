@@ -61,9 +61,9 @@ func sqlset(t *thread) {
 	}
 }
 
+var X = gojieba.NewJieba(`dict/jieba.dict.utf8`, `dict/hmm_model.utf8`, `dict/user.dict.utf8`, `dict/idf.utf8`, `dict/stop_words.utf8`)
+
 func qasave(t *thread) {
-	x := gojieba.NewJieba(`dict/jieba.dict.utf8`, `dict/hmm_model.utf8`, `dict/user.dict.utf8`, `dict/idf.utf8`, `dict/stop_words.utf8`)
-	defer x.Free()
 	stmt, err := db.Prepare(`INSERT INTO qafts5 VALUES (?,?,?)`)
 	defer stmt.Close()
 	if err != nil {
@@ -81,7 +81,7 @@ func qasave(t *thread) {
 		k = re.ReplaceAllString(k, "")
 		k = strings.ReplaceAll(k, "&nbsp;", "")
 
-		ks := x.CutForSearch(k, true)
+		ks := X.CutForSearch(k, true)
 		k = strings.Join(ks, "/")
 		p.Message = k
 		k, ok = m["authorid"].(string)
