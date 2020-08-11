@@ -23,6 +23,11 @@ func WebRoot(w http.ResponseWriter, req *http.Request) {
 	} else {
 		page = q["page"][0]
 	}
+	if len(query) > 100 {
+		err := errors.New("关键词过长")
+		e(w, err)
+		return
+	}
 	i, err := strconv.ParseInt(page, 10, 64)
 	if err != nil {
 		e(w, err)
