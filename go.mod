@@ -1,4 +1,4 @@
-module github.com/xmdhs/hidethread
+module github.com/xmdhs/searchqanda
 
 go 1.14
 
