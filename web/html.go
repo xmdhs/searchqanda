@@ -49,9 +49,9 @@ const (
 		<hr/>
 		<details>
 			<summary>用法说明</summary>
-			<p>使用空格分隔关键词。例如 <code class="language-plaintext highlighter-rouge">崩溃 log</code> ，表示搜索结果中必须有“崩溃”"log"。</p> 
-			<p>关键词前加<code class="language-plaintext highlighter-rouge"> - </code>表示搜索结果中不能含有此关键词。例如 <code class="language-plaintext highlighter-rouge">崩溃 -log</code> ，表示搜索结果中必须有 “崩溃”，必须没有 "log"。</p> 
-			<p>关键词使用<code class="language-plaintext highlighter-rouge">""</code>围住表示忽略空格的作用。例如 <code class="language-plaintext highlighter-rouge">"崩溃 log"</code> ，表示搜索结果中必须有 <code class="language-plaintext highlighter-rouge">崩溃 log</code> 不能有 <code class="language-plaintext highlighter-rouge">log 崩溃</code>。</p> 
+			<p>使用空格分隔关键词。例如 <code class="language-plaintext highlighter-rouge">崩溃 log</code> ，表示搜索结果中必须有“崩溃” “log”。</p> 
+			<p>关键词前加 <code class="language-plaintext highlighter-rouge">-</code> 表示搜索结果中不能含有此关键词。例如 <code class="language-plaintext highlighter-rouge">崩溃 -log</code> ，表示搜索结果中必须有 “崩溃”，必须没有 "log"。</p> 
+			<p>关键词使用<code class="language-plaintext highlighter-rouge">""</code>围住表示忽略空格的作用。例如 <code class="language-plaintext highlighter-rouge">"崩溃 log"</code> ，表示搜索结果中必须有 <code class="language-plaintext highlighter-rouge">崩溃 log</code> 或者 <code class="language-plaintext highlighter-rouge">崩溃log</code> 不能有 <code class="language-plaintext highlighter-rouge">log 崩溃</code>。</p> 
 		</details>
 	  </div>
 	</body>

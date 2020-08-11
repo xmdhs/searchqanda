@@ -109,6 +109,7 @@ func replace(txt string) string {
 	txt = strings.ReplaceAll(txt, "=", "+")
 	txt = strings.ReplaceAll(txt, "+", "+")
 	txt = strings.ReplaceAll(txt, "*", "+")
+	txt = strings.ReplaceAll(txt, ":", "+")
 	txt = strings.ReplaceAll(txt, "&", "+")
 	txt = strings.ReplaceAll(txt, "#", "+")
 	txt = strings.ReplaceAll(txt, "%", "+")
