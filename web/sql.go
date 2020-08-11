@@ -167,6 +167,7 @@ func cutsearch(src string) string {
 		src = strings.Trim(src, `"`)
 		t = true
 	}
+	src = strings.ReplaceAll(src, "-", "+")
 	l := get.Seg.CutSearch(src, true)
 	if t {
 		src = strings.Join(l, " ")
