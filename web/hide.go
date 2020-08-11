@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/xmdhs/hidethread/get"
+	"github.com/xmdhs/searchqanda/get"
 )
 
 func Hidethead(w http.ResponseWriter, req *http.Request) {

@@ -6,8 +6,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/xmdhs/hidethread/get"
-	"github.com/xmdhs/hidethread/web"
+	"github.com/xmdhs/searchqanda/get"
+	"github.com/xmdhs/searchqanda/web"
 )
 
 func main() {

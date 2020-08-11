@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/xmdhs/hidethread/get"
+	"github.com/xmdhs/searchqanda/get"
 )
 
 func search(txt, offset string) ([]resultslist, error) {
