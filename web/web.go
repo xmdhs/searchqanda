@@ -18,7 +18,6 @@ func WebRoot(w http.ResponseWriter, req *http.Request) {
 		page = "0"
 	} else {
 		page = q["page"][0]
-
 	}
 	i, err := strconv.ParseInt(page, 10, 64)
 	if err != nil {

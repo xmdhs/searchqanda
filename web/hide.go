@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/xmdhs/hidethread/get"
 )
@@ -21,7 +22,15 @@ func Hidethead(w http.ResponseWriter, req *http.Request) {
 	}
 	if len(q["q"]) != 0 {
 		value := q["q"][0]
-		showhide(value, page, w)
+		i, err := strconv.ParseInt(page, 10, 64)
+		if err != nil {
+			e(w, err)
+			return
+		}
+		offset := strconv.FormatInt(i*20, 10)
+		i++
+		page = strconv.FormatInt(i, 10)
+		showhide(value, offset, page, w)
 	} else {
 		rows, err := get.Db.Query(`SELECT DISTINCT fid FROM hidethread`)
 		defer rows.Close()
@@ -57,7 +66,7 @@ func Hidethead(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func showhide(fid, offset string, w io.Writer) {
+func showhide(fid, offset, page string, w io.Writer) {
 	var rows *sql.Rows
 	var err error
 	if fid != "all" {
@@ -85,7 +94,7 @@ func showhide(fid, offset string, w io.Writer) {
 	if len(list) != 20 {
 		T = false
 	} else {
-		Link = "./s?q=" + fid + "&page=" + offset
+		Link = "./hide?q=" + fid + "&page=" + page
 	}
 	r := results{
 		Name: fid,
