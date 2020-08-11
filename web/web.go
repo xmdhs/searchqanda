@@ -1,9 +1,13 @@
 package web
 
 import (
+	"errors"
 	"io"
 	"net/http"
 	"strconv"
+	"strings"
+
+	"github.com/yanyiwu/gojieba"
 )
 
 func WebRoot(w http.ResponseWriter, req *http.Request) {
@@ -31,7 +35,12 @@ func WebRoot(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	if len(r) == 0 {
-		http.NotFound(w, req)
+		x := gojieba.NewJieba(`dict/jieba.dict.utf8`, `dict/hmm_model.utf8`, `dict/user.dict.utf8`, `dict/idf.utf8`, `dict/stop_words.utf8`)
+		defer x.Free()
+		s := x.CutForSearch(query, true)
+		t := strings.Join(s, " ")
+		err := errors.New("未搜索到结果，建议使用\n\n" + t + "\n\n来尝试搜索")
+		e(w, err)
 		return
 	}
 	i++
