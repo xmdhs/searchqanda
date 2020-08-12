@@ -77,7 +77,7 @@ func search(txt, offset string) ([]resultslist, error) {
 						aa = 0
 					}
 					tt = src[aa:b]
-					strings.ReplaceAll(tt, t, `<b>`+t+`</b>`)
+					tt = strings.ReplaceAll(tt, t, `<b>`+t+`</b>`)
 					break
 				}
 				if len(tt) == 0 {
