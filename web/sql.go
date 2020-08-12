@@ -20,6 +20,7 @@ func search(txt, offset string) ([]resultslist, error) {
 		return []resultslist{}, errors.New(`txt == ""`)
 	}
 	list := cut(txt)
+	l := strings.Split(txt, " ")
 	for i, v := range list {
 		v = replace(v)
 		list[i] = cutsearch(v)
@@ -51,13 +52,13 @@ func search(txt, offset string) ([]resultslist, error) {
 		}
 		var tt string
 		for _, v := range p {
-			for _, t := range list {
+			src := strings.ReplaceAll(v.Message, "/", "")
+			for _, t := range l {
 				t = strings.ReplaceAll(t, `"`, "")
-				re, _ := regexp.Compile("\\<[\\S\\s]+?\\>")
-				src := re.ReplaceAllString(v.Message, "")
-				src = strings.ReplaceAll(src, "&nbsp;", "")
-				src = strings.ReplaceAll(src, "/", "")
-				if strings.Contains(strings.ToTitle(v.Message), strings.ToTitle(t)) {
+				if strings.Contains(strings.ToTitle(src), strings.ToTitle(t)) {
+					re, _ := regexp.Compile("\\<[\\S\\s]+?\\>")
+					src = re.ReplaceAllString(src, "")
+					src = strings.ReplaceAll(src, "&nbsp;", "")
 					a := strings.Index(strings.ToTitle(src), strings.ToTitle(t))
 					aa := a - 200
 					b := a + 200
