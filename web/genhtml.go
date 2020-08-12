@@ -20,7 +20,7 @@ type results struct {
 type resultslist struct {
 	Title string
 	Link  string
-	Txt   string
+	Txt   template.HTML
 }
 
 func pase(w io.Writer, list []resultslist, Name, page string) {

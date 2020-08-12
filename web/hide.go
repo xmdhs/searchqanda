@@ -86,7 +86,7 @@ func showhide(fid, offset, page string, w io.Writer) {
 		var r resultslist
 		r.Title = subject
 		r.Link = "https://www.mcbbs.net/thread-" + tid + "-1-1.html"
-		r.Txt = author + "(" + authorid + ")" + "  ---" + dateline
+		r.Txt = template.HTML(author + "(" + authorid + ")" + "  ---" + dateline)
 		list = append(list, r)
 	}
 	Link := ""

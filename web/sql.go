@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"html/template"
 	"regexp"
 	"strings"
 	"time"
@@ -59,6 +60,7 @@ func search(txt, offset string) ([]resultslist, error) {
 					re, _ := regexp.Compile("\\<[\\S\\s]+?\\>")
 					src = re.ReplaceAllString(src, "")
 					src = strings.ReplaceAll(src, "&nbsp;", "")
+					src = strings.ReplaceAll(src, "\n;", "")
 					a := strings.Index(strings.ToTitle(src), strings.ToTitle(t))
 					aa := a - 200
 					b := a + 200
@@ -75,6 +77,7 @@ func search(txt, offset string) ([]resultslist, error) {
 						aa = 0
 					}
 					tt = src[aa:b]
+					strings.ReplaceAll(tt, t, `<b>`+t+`</b>`)
 					break
 				}
 				if len(tt) == 0 {
@@ -90,7 +93,7 @@ func search(txt, offset string) ([]resultslist, error) {
 		l := resultslist{
 			Title: subject,
 			Link:  `https://www.mcbbs.net/thread-` + tid + `-1-1.html`,
-			Txt:   tt,
+			Txt:   template.HTML(tt),
 		}
 		lists = append(lists, l)
 	}
