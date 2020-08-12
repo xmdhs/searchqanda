@@ -77,11 +77,15 @@ func Startrange() {
 		}
 	}
 	if end == 0 {
-		_, err := db.Exec("INSERT INTO config VALUES (?,?)", -1, 1092244)
+		tid, err := getnewtid()
 		if err != nil {
 			panic(err)
 		}
-		end = 1092244
+		_, err = db.Exec("INSERT INTO config VALUES (?,?)", -1, tid)
+		if err != nil {
+			panic(err)
+		}
+		end = sqlget(-1)
 	}
 	Range(start, end, 5)
 	tid, err := getnewtid()
