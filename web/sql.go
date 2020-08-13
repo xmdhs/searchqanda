@@ -56,6 +56,7 @@ func search(txt, offset string) ([]resultslist, error) {
 			src := strings.ReplaceAll(v.Message, "/", "")
 			for _, t := range l {
 				t = strings.ReplaceAll(t, `"`, "")
+				t := strings.ReplaceAll(t, "/", "")
 				if strings.Contains(strings.ToTitle(src), strings.ToTitle(t)) {
 					re, _ := regexp.Compile("\\<[\\S\\s]+?\\>")
 					src = re.ReplaceAllString(src, "")
