@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"html/template"
 	"regexp"
 	"strings"
 	"time"
@@ -51,7 +50,7 @@ func search(txt, offset string) ([]resultslist, error) {
 		if err != nil {
 			return []resultslist{}, err
 		}
-		var tt string
+		var b1, b2, key string
 		for _, v := range p {
 			src := strings.ReplaceAll(v.Message, "/", "")
 			for _, t := range l {
@@ -63,8 +62,10 @@ func search(txt, offset string) ([]resultslist, error) {
 					src = strings.ReplaceAll(src, "&nbsp;", "")
 					src = strings.ReplaceAll(src, "\n;", "")
 					a := strings.Index(strings.ToTitle(src), strings.ToTitle(t))
+					a1 := a + len(t)
+					key = src[a:a1]
 					aa := a - 200
-					b := a + 200
+					b := a1 + 200
 					if aa <= 0 {
 						aa = 0
 					}
@@ -77,24 +78,27 @@ func search(txt, offset string) ([]resultslist, error) {
 					if aa == -1 {
 						aa = 0
 					}
-					tt = src[aa:b]
-					tt = strings.ReplaceAll(tt, t, `<font color="red">`+t+`</font>`)
+					b1 = src[aa:a]
+					b2 = src[a1:b]
 					break
 				}
-				if len(tt) == 0 {
+				if len(b1) == 0 {
 					if len(src) <= 500 {
-						tt = src
+						b1 = src
 					} else {
-						tt = src[0:500]
+						b1 = src[0:500]
 					}
 				}
 			}
 		}
-		tt = strings.ToValidUTF8(tt, "")
+		b1 = strings.ToValidUTF8(b1, "")
+		b2 = strings.ToValidUTF8(b2, "")
 		l := resultslist{
 			Title: subject,
 			Link:  `https://www.mcbbs.net/thread-` + tid + `-1-1.html`,
-			Txt:   template.HTML(tt),
+			Txt:   b1,
+			Txt1:  b2,
+			Key:   key,
 		}
 		lists = append(lists, l)
 	}
