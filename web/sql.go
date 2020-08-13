@@ -68,8 +68,8 @@ func search(txt, offset string) ([]resultslist, error) {
 					if aa <= 0 {
 						aa = 0
 					}
-					if b >= len(src) {
-						b = len(src) - 1
+					if b > len(src) {
+						b = len(src)
 					}
 					if b == -1 {
 						b = 0
