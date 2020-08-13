@@ -77,9 +77,7 @@ func search(txt, offset string) ([]resultslist, error) {
 						aa = 0
 					}
 					tt = src[aa:b]
-					for _, v := range get.Seg.CutSearch(t, true) {
-						tt = strings.ReplaceAll(tt, v, `<font color="red"><b>`+t+`</b></font>`)
-					}
+					tt = strings.ReplaceAll(tt, t, `<font color="red">`+t+`</font>`)
 					break
 				}
 				if len(tt) == 0 {
