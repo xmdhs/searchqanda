@@ -174,7 +174,7 @@ func cutsearch(src string) string {
 	}
 	src = strings.ReplaceAll(src, `"`, "")
 	src = strings.ReplaceAll(src, "-", " ")
-	l := get.Seg.CutSearch(src, true)
+	l := get.X.CutForSearch(src, true)
 	ll := make([]string, 0)
 
 	for _, v := range l {

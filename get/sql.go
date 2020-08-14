@@ -9,15 +9,15 @@ import (
 	"strings"
 	"time"
 
+	"github.com/yanyiwu/gojieba"
 	//数据库驱动
-	"github.com/go-ego/gse"
 	_ "github.com/mattn/go-sqlite3"
 )
 
 var db *sql.DB
 var Db *sql.DB
 
-var Seg gse.Segmenter
+var X = gojieba.NewJieba(`dict/jieba.dict.utf8`, `dict/hmm_model.utf8`, `dict/user.dict.utf8`, `dict/idf.utf8`, `dict/stop_words.utf8`)
 
 func init() {
 	var err error
@@ -32,7 +32,6 @@ func init() {
 		log.Println(err)
 	}
 	Db = db
-	Seg.LoadDict(`dictionary.txt`)
 }
 
 func sqlset(t *thread) {
@@ -83,7 +82,7 @@ func qasave(t *thread) {
 		k = re.ReplaceAllString(k, "")
 		k = strings.ReplaceAll(k, "&nbsp;", "")
 
-		ks := Seg.CutSearch(k, true)
+		ks := X.CutForSearch(k, true)
 		k = strings.Join(ks, "/")
 		p.Message = k
 		k, ok = m["authorid"].(string)
