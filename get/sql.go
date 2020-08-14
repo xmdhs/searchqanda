@@ -74,6 +74,7 @@ func qasave(t *thread) {
 	subject := t.Variables.Thread["subject"].(string)
 	temptxt := t.Variables.Postlist
 	tt := make([]post, 0, len(temptxt))
+	log.Println("start", tid)
 	for _, v := range temptxt {
 		p := post{}
 		m := v.(map[string]interface{})
@@ -96,7 +97,7 @@ func qasave(t *thread) {
 		panic(err)
 	}
 	_, err = stmt.Exec(tid, subject, string(b))
-	log.Println(tid)
+	log.Println("end", tid)
 	if err != nil {
 		log.Println(err, t)
 	}
