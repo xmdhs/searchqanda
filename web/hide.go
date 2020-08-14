@@ -3,7 +3,6 @@ package web
 import (
 	"database/sql"
 	"html/template"
-	"io"
 	"log"
 	"net/http"
 	"strconv"
@@ -66,7 +65,7 @@ func Hidethead(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func showhide(fid, offset, page string, w io.Writer) {
+func showhide(fid, offset, page string, w http.ResponseWriter) {
 	var rows *sql.Rows
 	var err error
 	if fid != "all" {

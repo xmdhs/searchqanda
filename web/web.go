@@ -2,7 +2,6 @@ package web
 
 import (
 	"errors"
-	"io"
 	"net/http"
 	"strconv"
 )
@@ -45,8 +44,8 @@ func WebRoot(w http.ResponseWriter, req *http.Request) {
 	pase(w, r, query, page)
 }
 
-func e(w io.Writer, err error) {
-	w.Write([]byte(err.Error()))
+func e(w http.ResponseWriter, err error) {
+	http.Error(w, err.Error(), 500)
 }
 
 func Style(w http.ResponseWriter, req *http.Request) {
