@@ -31,7 +31,7 @@ func search(txt, offset string) ([]resultslist, error) {
 	})
 	txt = strings.Join(list, " ")
 	txt = "'" + txt + "'"
-	rows, err := get.Db.QueryContext(ctx, `SELECT key,subject,source FROM qafts5 WHERE qafts5 MATCH `+txt+` ORDER BY rank DESC LIMIT 20 OFFSET ?`, offset)
+	rows, err := get.Db.QueryContext(ctx, `SELECT key,subject,source FROM qafts5 WHERE qafts5 MATCH `+txt+` ORDER BY rank LIMIT 20 OFFSET ?`, offset)
 	defer rows.Close()
 	if err != nil {
 		return []resultslist{}, err
