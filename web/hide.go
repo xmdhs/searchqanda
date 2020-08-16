@@ -3,7 +3,6 @@ package web
 import (
 	"database/sql"
 	"html/template"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -88,28 +87,6 @@ func showhide(fid, offset, page string, w http.ResponseWriter) {
 		r.Txt = author + "(" + authorid + ")" + "  ---" + dateline
 		list = append(list, r)
 	}
-	Link := ""
-	T := true
-	if len(list) != 20 {
-		T = false
-	} else {
-		Link = "./hide?q=" + fid + "&page=" + page
-	}
-	r := results{
-		Name: fid,
-		List: list,
-		T:    T,
-		Link: Link,
-	}
-	t, err := template.New("page").Parse(html)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	err = t.Execute(w, r)
-	if err != nil {
-		log.Println(err)
-		return
-	}
+	pase(w, list, fid, page, "./hide?q=")
 
 }

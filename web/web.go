@@ -41,7 +41,7 @@ func WebRoot(w http.ResponseWriter, req *http.Request) {
 	}
 	i++
 	page = strconv.FormatInt(i, 10)
-	pase(w, r, query, page)
+	pase(w, r, query, page, "./s?q=")
 }
 
 func e(w http.ResponseWriter, err error) {

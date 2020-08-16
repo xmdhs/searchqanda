@@ -25,13 +25,13 @@ type resultslist struct {
 	Key   string
 }
 
-func pase(w io.Writer, list []resultslist, Name, page string) {
+func pase(w io.Writer, list []resultslist, Name, page, link string) {
 	T := true
 	Link := ""
 	if len(list) != 20 {
 		T = false
 	} else {
-		Link = "./s?q=" + Name + "&page=" + page
+		Link = link + Name + "&page=" + page
 	}
 	r := results{
 		Name: Name,

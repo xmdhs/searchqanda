@@ -19,6 +19,7 @@ func main() {
 		r.HandleFunc("/search/s", web.WebRoot)
 		r.HandleFunc("/search/style.css", web.Style)
 		r.HandleFunc("/search/hide", web.Hidethead)
+		r.HandleFunc("/search/snapshot", web.Snapshot)
 		s := http.Server{
 			Addr:         ":8081",
 			ReadTimeout:  5 * time.Second,
