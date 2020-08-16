@@ -2,7 +2,9 @@ package web
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
+	"strconv"
 
 	"github.com/xmdhs/searchqanda/get"
 )
@@ -22,7 +24,13 @@ func Snapshot(w http.ResponseWriter, r *http.Request) {
 	if query == "" {
 		w.Write([]byte(snapshot))
 	} else {
-		rows, err := get.Db.Query(`SELECT source FROM qafts5 WHERE key = ?`, query)
+		i, err := strconv.ParseInt(query, 10, 64)
+		if err != nil {
+			e(w, err)
+			return
+		}
+		s := strconv.FormatInt(i, 10)
+		rows, err := get.Db.Query(`SELECT source FROM qafts5 WHERE key MATCH ` + s)
 		if err != nil {
 			e(w, err)
 			return
@@ -31,6 +39,10 @@ func Snapshot(w http.ResponseWriter, r *http.Request) {
 		rows.Next()
 		rows.Scan(&source)
 		rows.Close()
+		if source == "" {
+			e(w, errors.New(`""`))
+			return
+		}
 		if tojson {
 			w.Write([]byte(source))
 			return
@@ -46,6 +58,7 @@ func Snapshot(w http.ResponseWriter, r *http.Request) {
 			r := resultslist{
 				Title: v.Authorid,
 				Txt:   v.Message,
+				Link:  "https://www.mcbbs.net/?" + v.Authorid,
 			}
 			rlist = append(rlist, r)
 		}
