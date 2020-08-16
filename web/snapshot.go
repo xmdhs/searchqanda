@@ -30,7 +30,7 @@ func Snapshot(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		s := strconv.FormatInt(i, 10)
-		rows, err := get.Db.Query(`SELECT source FROM key WHERE key MATCH ` + s)
+		rows, err := get.Db.Query(`SELECT source FROM qafts5 WHERE key MATCH ` + s)
 		if err != nil {
 			e(w, err)
 			return
