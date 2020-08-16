@@ -62,7 +62,7 @@ func Snapshot(w http.ResponseWriter, r *http.Request) {
 			}
 			rlist = append(rlist, r)
 		}
-		pase(w, rlist, query, "", "")
+		pase(w, rlist, "快照 - "+query, "", "")
 	}
 }
 
