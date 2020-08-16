@@ -2,7 +2,6 @@ package web
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
 	"strconv"
 
@@ -40,7 +39,7 @@ func Snapshot(w http.ResponseWriter, r *http.Request) {
 		rows.Scan(&source)
 		rows.Close()
 		if source == "" {
-			e(w, errors.New(`""`))
+			http.NotFound(w, r)
 			return
 		}
 		if tojson {
