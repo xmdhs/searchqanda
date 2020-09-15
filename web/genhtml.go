@@ -50,8 +50,4 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	t, err = template.New("hide").Parse(html)
-	if err != nil {
-		panic(err)
-	}
 }

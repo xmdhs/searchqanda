@@ -52,7 +52,7 @@ func Hidethead(w http.ResponseWriter, req *http.Request) {
 			Name: "无权查看的帖子",
 			List: list,
 		}
-		err = t.ExecuteTemplate(w, "hide", r)
+		err = t.ExecuteTemplate(w, "page", r)
 		if err != nil {
 			panic(err)
 		}
