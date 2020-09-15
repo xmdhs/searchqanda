@@ -48,12 +48,6 @@ func e(w http.ResponseWriter, err error) {
 	http.Error(w, err.Error(), 500)
 }
 
-func Style(w http.ResponseWriter, req *http.Request) {
-	w.Header().Set("content-type", "text/css")
-	w.Header().Set("Cache-Control", "max-age=315360000")
-	w.Write([]byte(css))
-}
-
 func Index(w http.ResponseWriter, req *http.Request) {
 	w.Write([]byte(index))
 }

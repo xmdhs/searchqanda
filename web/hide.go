@@ -2,7 +2,6 @@ package web
 
 import (
 	"database/sql"
-	"html/template"
 	"net/http"
 	"strconv"
 
@@ -53,11 +52,7 @@ func Hidethead(w http.ResponseWriter, req *http.Request) {
 			Name: "无权查看的帖子",
 			List: list,
 		}
-		t, err := template.New("page").Parse(html)
-		if err != nil {
-			panic(err)
-		}
-		err = t.Execute(w, r)
+		err = t.ExecuteTemplate(w, "hide", r)
 		if err != nil {
 			panic(err)
 		}

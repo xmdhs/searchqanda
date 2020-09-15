@@ -6,10 +6,6 @@ import (
 	"log"
 )
 
-func Genhtml() {
-
-}
-
 type results struct {
 	Name string
 	List []resultslist
@@ -39,14 +35,23 @@ func pase(w io.Writer, list []resultslist, Name, page, link string) {
 		List: list,
 		T:    T,
 	}
-	t, err := template.New("page").Parse(html)
+	err := t.ExecuteTemplate(w, "page", r)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	err = t.Execute(w, r)
+}
+
+var t *template.Template
+
+func init() {
+	var err error
+	t, err = template.New("page").Parse(html)
 	if err != nil {
-		log.Println(err)
-		return
+		panic(err)
+	}
+	t, err = template.New("hide").Parse(html)
+	if err != nil {
+		panic(err)
 	}
 }

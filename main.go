@@ -17,7 +17,6 @@ func main() {
 		r := http.NewServeMux()
 		r.HandleFunc("/search", web.Index)
 		r.HandleFunc("/search/s", web.WebRoot)
-		r.HandleFunc("/search/style.css", web.Style)
 		r.HandleFunc("/search/hide", web.Hidethead)
 		r.HandleFunc("/search/snapshot", web.Snapshot)
 		s := http.Server{
