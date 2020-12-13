@@ -15,12 +15,18 @@ func Auth(HandleFunc func(http.ResponseWriter, *http.Request), password string) 
 				w.WriteHeader(403)
 				return
 			}
-			p = c.Value
+			b, err := hex.DecodeString(c.Value)
+			if err != nil {
+				w.WriteHeader(403)
+				return
+			}
+			p = string(b)
 		}
 		if tosha256(p) == password {
+			hex := hex.EncodeToString([]byte(p))
 			http.SetCookie(w, &http.Cookie{
 				Name:     "password",
-				Value:    p,
+				Value:    hex,
 				Secure:   true,
 				HttpOnly: true,
 				SameSite: http.SameSiteStrictMode,
