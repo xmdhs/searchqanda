@@ -46,7 +46,7 @@ var t *template.Template
 
 func init() {
 	var err error
-	t, err = template.New("page").Parse(html)
+	t, err = template.New("page").Parse(ahtml)
 	if err != nil {
 		panic(err)
 	}

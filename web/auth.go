@@ -17,7 +17,7 @@ func Auth(HandleFunc func(http.ResponseWriter, *http.Request), password string) 
 			}
 			p = c.Value
 		}
-		if tosha256(p) == tosha256(password) {
+		if tosha256(p) == password {
 			http.SetCookie(w, &http.Cookie{
 				Name:     "password",
 				Value:    p,

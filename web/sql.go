@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"html"
 	"regexp"
 	"strings"
 	"time"
@@ -59,7 +60,7 @@ func search(txt, offset string) ([]resultslist, error) {
 				if strings.Contains(strings.ToTitle(src), strings.ToTitle(t)) {
 					re, _ := regexp.Compile("\\<[\\S\\s]+?\\>")
 					src = re.ReplaceAllString(src, "")
-					src = strings.ReplaceAll(src, "&nbsp;", "")
+					src = html.UnescapeString(html.UnescapeString(src))
 					src = strings.ReplaceAll(src, "\n;", "")
 					a := strings.Index(strings.ToTitle(src), strings.ToTitle(t))
 					a1 := a + len(t)
