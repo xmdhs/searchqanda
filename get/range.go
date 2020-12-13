@@ -2,6 +2,7 @@ package get
 
 import (
 	"bufio"
+	"errors"
 	"log"
 	"net/http"
 	"strconv"
@@ -127,13 +128,30 @@ func getnewtid() (tid string, err error) {
 	}
 	bw := bufio.NewScanner(rep.Body)
 	for bw.Scan() {
-		if strings.Contains(bw.Text(), `target="_blank" class="xst" `) {
-			t := bw.Text()
-			a := strings.Index(t, `<a href="thread-`) + 16
-			b := strings.Index(t[a:], `-1-1.html" target`)
-			tid = t[a:][:b]
+		txt := bw.Text()
+		if strings.Contains(txt, `target="_blank" class="xst" `) {
+			tid, err = cut(txt, `<a href="thread-`, `-1-1.html" target`)
+			if err != nil {
+				log.Println(err)
+				continue
+			}
 			return
 		}
 	}
 	return
 }
+
+func cut(text, start, end string) (string, error) {
+	a := strings.Index(text, start)
+	if a == -1 {
+		return "", ErrNotFound
+	}
+	temp := text[a+len(start):]
+	b := strings.Index(temp, end)
+	if b == -1 {
+		return "", ErrNotFound
+	}
+	return temp[:b], nil
+}
+
+var ErrNotFound = errors.New(`not found`)

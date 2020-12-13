@@ -3,6 +3,7 @@ package get
 import (
 	"database/sql"
 	"encoding/json"
+	"html"
 	"log"
 	"regexp"
 	"strconv"
@@ -80,7 +81,7 @@ func qasave(t *thread) {
 		k, ok := m["message"].(string)
 		re, _ := regexp.Compile("\\<[\\S\\s]+?\\>")
 		k = re.ReplaceAllString(k, "")
-		k = strings.ReplaceAll(k, "&nbsp;", "")
+		k = html.UnescapeString(html.UnescapeString(k))
 
 		ks := X.CutForSearch(k, true)
 		k = strings.Join(ks, "/")
