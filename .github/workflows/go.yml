@@ -31,7 +31,8 @@ jobs:
         fi
 
     - name: Build
-      run: go build -o hidethread -trimpath -ldflags "-w -s" --tags "fts5" main.go 
+      run:  Build
+      run:  CC=clang CXX=clang++ go build -o hidethread -trimpath -ldflags '-w -s -linkmode "external" -extldflags "-static"' --tags "fts5" main.go 
 
     - name: Test
       run: go test -v ./...
