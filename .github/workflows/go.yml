@@ -33,7 +33,7 @@ jobs:
     - name: Build
       run:  |
            curl https://more.musl.cc/5/x86_64-linux-musl/x86_64-linux-musl-cross.tgz > /tmp/x86_64-linux-musl-cross.tgz
-           tar -q zxvf /tmp/x86_64-linux-musl-cross.tgz /tmp
+           tar qzxf /tmp/x86_64-linux-musl-cross.tgz /tmp
            export PATH=$PATH:/tmp/x86_64-linux-musl-cross/bin
            CC=x86_64-linux-musl-gcc CXX=x86_64-linux-musl-g++ go build -o hidethread -trimpath -ldflags '-w -s -linkmode "external" -extldflags "-static"' --tags "fts5" main.go 
 
