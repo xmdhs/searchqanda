@@ -22,20 +22,16 @@ jobs:
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
 
-    - name: Get dependencies
+    - name: Install musl-gcc5
       run: |
-        go get -v -t -d ./...
-        if [ -f Gopkg.toml ]; then
-            curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-            dep ensure
-        fi
+        curl https://more.musl.cc/5/x86_64-linux-musl/x86_64-linux-musl-cross.tgz > /tmp/x86_64-linux-musl-cross.tgz
+        tar zxf /tmp/x86_64-linux-musl-cross.tgz -C /tmp
+        export PATH=$PATH:/tmp/x86_64-linux-musl-cross/bin
 
     - name: Build
       run:  |
-           curl https://more.musl.cc/5/x86_64-linux-musl/x86_64-linux-musl-cross.tgz > /tmp/x86_64-linux-musl-cross.tgz
-           tar zxf /tmp/x86_64-linux-musl-cross.tgz -C /tmp
-           export PATH=$PATH:/tmp/x86_64-linux-musl-cross/bin
-           CC=x86_64-linux-musl-gcc CXX=x86_64-linux-musl-g++ go build -o hidethread -trimpath -ldflags '-w -s -linkmode "external" -extldflags "-static"' --tags "fts5" main.go 
+        export PATH=$PATH:/tmp/x86_64-linux-musl-cross/bin
+        CC=x86_64-linux-musl-gcc CXX=x86_64-linux-musl-g++ go build -o hidethread -trimpath -ldflags '-w -s -linkmode "external" -extldflags "-static"' --tags "fts5" main.go 
 
     - name: Test
       run: go test -v ./...
