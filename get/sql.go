@@ -51,11 +51,17 @@ func sqlset(t *thread) {
 	lastposter := t.Variables.Thread["lastposter"].(string)
 	subject := t.Variables.Thread["subject"].(string)
 
+	subject = html.UnescapeString(html.UnescapeString(subject))
+
 	i, err := strconv.ParseInt(dateline, 10, 64)
 	if err != nil {
 		panic(err)
 	}
-	dateline = time.Unix(i, 0).Format("2006-01-02 15:04:05")
+	l, err := time.LoadLocation("Asia/Shanghai")
+	if err != nil {
+		panic(err)
+	}
+	dateline = time.Unix(i, 0).In(l).Format("2006-01-02 15:04:05")
 
 	_, err = stmt.Exec(tid, fid, authorid, author, views, dateline, lastpost, lastposter, subject)
 	log.Println(tid, fid, authorid, author, views, dateline, lastpost, lastposter, subject)
