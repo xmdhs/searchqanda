@@ -21,6 +21,7 @@ func Auth(HandleFunc func(http.ResponseWriter, *http.Request), password string) 
 					SameSite: http.SameSiteStrictMode,
 				})
 				HandleFunc(w, r)
+				return
 			}
 		}
 		w.Header().Set("WWW-Authenticate", `Basic realm="password"`)
