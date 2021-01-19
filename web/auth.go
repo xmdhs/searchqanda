@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"net/http"
+	"net/url"
 )
 
 func Auth(HandleFunc func(http.ResponseWriter, *http.Request), password string) func(http.ResponseWriter, *http.Request) {
@@ -14,7 +15,7 @@ func Auth(HandleFunc func(http.ResponseWriter, *http.Request), password string) 
 			if p == password {
 				http.SetCookie(w, &http.Cookie{
 					Name:     "password",
-					Value:    hex.EncodeToString([]byte(p)),
+					Value:    url.QueryEscape(p),
 					Secure:   true,
 					HttpOnly: true,
 					SameSite: http.SameSiteStrictMode,
