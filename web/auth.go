@@ -8,34 +8,15 @@ import (
 
 func Auth(HandleFunc func(http.ResponseWriter, *http.Request), password string) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		p := r.URL.Query().Get("password")
-		if p == "" {
-			c, err := r.Cookie("password")
-			if err != nil {
-				w.WriteHeader(403)
-				return
+		_, password, ok := r.BasicAuth()
+		if ok {
+			p := tosha256(password)
+			if p == password {
+				HandleFunc(w, r)
 			}
-			b, err := hex.DecodeString(c.Value)
-			if err != nil {
-				w.WriteHeader(403)
-				return
-			}
-			p = string(b)
 		}
-		if tosha256(p) == password {
-			hex := hex.EncodeToString([]byte(p))
-			http.SetCookie(w, &http.Cookie{
-				Name:     "password",
-				Value:    hex,
-				Secure:   true,
-				HttpOnly: true,
-				SameSite: http.SameSiteStrictMode,
-			})
-			HandleFunc(w, r)
-		} else {
-			w.WriteHeader(403)
-			return
-		}
+		w.WriteHeader(401)
+		w.Header().Add("www-authenticate", `Basic realm="password"`)
 	}
 }
 
