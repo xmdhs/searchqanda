@@ -15,8 +15,8 @@ func Auth(HandleFunc func(http.ResponseWriter, *http.Request), password string) 
 				HandleFunc(w, r)
 			}
 		}
+		w.Header().Set("WWW-Authenticate", `Basic realm="password"`)
 		w.WriteHeader(401)
-		w.Header().Add("www-authenticate", `Basic realm="password"`)
 	}
 }
 
