@@ -8,9 +8,9 @@ import (
 
 func Auth(HandleFunc func(http.ResponseWriter, *http.Request), password string) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		_, password, ok := r.BasicAuth()
+		_, p, ok := r.BasicAuth()
 		if ok {
-			p := tosha256(password)
+			p := tosha256(p)
 			if p == password {
 				HandleFunc(w, r)
 			}
