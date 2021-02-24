@@ -12,6 +12,8 @@ import (
 	"github.com/xmdhs/searchqanda/get"
 )
 
+var htmlreg = regexp.MustCompile("\\<[\\S\\s]+?\\>")
+
 func search(txt, offset string) ([]resultslist, error) {
 	if txt == "" {
 		return []resultslist{}, errors.New(`""`)
@@ -58,11 +60,13 @@ func search(txt, offset string) ([]resultslist, error) {
 				t = strings.ReplaceAll(t, `"`, "")
 				t := strings.ReplaceAll(t, "/", "")
 				if strings.Contains(strings.ToTitle(src), strings.ToTitle(t)) {
-					re, _ := regexp.Compile("\\<[\\S\\s]+?\\>")
-					src = re.ReplaceAllString(src, "")
+					src = htmlreg.ReplaceAllString(src, "")
 					src = html.UnescapeString(html.UnescapeString(src))
 					src = strings.ReplaceAll(src, "\n;", "")
 					a := strings.Index(strings.ToTitle(src), strings.ToTitle(t))
+					if a == -1 {
+						continue
+					}
 					a1 := a + len(t)
 					key = src[a:a1]
 					aa := a - 200

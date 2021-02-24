@@ -70,6 +70,8 @@ func sqlset(t *thread) {
 	}
 }
 
+var htmlreg = regexp.MustCompile("\\<[\\S\\s]+?\\>")
+
 func qasave(t *thread) {
 	stmt, err := db.Prepare(`INSERT INTO qafts5 VALUES (?,?,?)`)
 	defer stmt.Close()
@@ -85,8 +87,7 @@ func qasave(t *thread) {
 		p := post{}
 		m := v.(map[string]interface{})
 		k, ok := m["message"].(string)
-		re, _ := regexp.Compile("\\<[\\S\\s]+?\\>")
-		k = re.ReplaceAllString(k, "")
+		k = htmlreg.ReplaceAllString(k, "")
 		k = html.UnescapeString(html.UnescapeString(k))
 
 		ks := X.CutForSearch(k, true)
