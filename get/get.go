@@ -22,7 +22,7 @@ func init() {
 }
 
 func h(tid string) (b []byte, err error) {
-	reqs, err := http.NewRequest("GET", `https://www.mcbbs.net/api/mobile/index.php?version=4&module=viewthread&tid=`+tid, nil)
+	reqs, err := http.NewRequest("GET", `https://late-sound-313b.xmdhs.workers.dev/api/mobile/index.php?version=4&module=viewthread&tid=`+tid, nil)
 	if err != nil {
 		return
 	}
