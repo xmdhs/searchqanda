@@ -49,5 +49,9 @@ func e(w http.ResponseWriter, err error) {
 }
 
 func Index(w http.ResponseWriter, req *http.Request) {
-	w.Write([]byte(index))
+	b, err := htmlfs.ReadFile("html/index.html")
+	if err != nil {
+		panic(err)
+	}
+	w.Write([]byte(b))
 }

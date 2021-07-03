@@ -30,11 +30,11 @@ func Hidethead(w http.ResponseWriter, req *http.Request) {
 		showhide(value, offset, page, w)
 	} else {
 		rows, err := get.Db.Query(`SELECT DISTINCT fid FROM hidethread`)
-		defer rows.Close()
 		if err != nil {
 			e(w, err)
 			return
 		}
+		defer rows.Close()
 		var fid string
 		list := make([]resultslist, 0)
 		var rr resultslist

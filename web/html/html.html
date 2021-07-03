@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>问答版搜索 - {{.Name}}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/xmdhs/searchqanda/style.css">
+    <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b5191d5d3a534b2c825c364fe714b39e"}'></script>
+</head>
+
+<body>
+    <div class="container-lg px-3 my-5 markdown-body">
+        <h1>{{.Name}}</h1>{{range .List}}<h3><a href="{{ .Link}}" target="_blank">{{ .Title}}</a></h3>
+        <blockquote>
+            <p>{{ .Txt}}{{if .Key}}<font color="red">{{ .Key}}</font>{{ .Txt1}}{{end}}</p>
+        </blockquote>{{end}} {{if .T}}<br>
+        <hr>
+        <p><a href="{{ .Link}}">more</a></p>{{else}} {{end}}
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/anchor-js/anchor.min.js"></script>
+    <script>anchors.add();</script>
+</body>
+
+</html>

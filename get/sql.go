@@ -27,7 +27,13 @@ func init() {
 		panic(err)
 	}
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS hidethread(tid INT PRIMARY KEY NOT NULL,fid TEXT NOT NULL,authorid TEXT NOT NULL,author TEXT NOT NULL,views INT NOT NULL,dateline TEXT NOT NULL,lastpost TEXT NOT NULL,lastposter TEXT NOT NULL,subject TEXT NOT NULL)`)
+	if err != nil {
+		log.Println(err)
+	}
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS config(id INT PRIMARY KEY NOT NULL,i INT NOT NULL)`)
+	if err != nil {
+		log.Println(err)
+	}
 	_, err = db.Exec(`CREATE VIRTUAL TABLE IF NOT EXISTS qafts5 USING fts5(key,subject UNINDEXED, source)`)
 	if err != nil {
 		log.Println(err)
@@ -37,10 +43,10 @@ func init() {
 
 func sqlset(t *thread) {
 	stmt, err := db.Prepare(`INSERT INTO hidethread VALUES (?,?,?,?,?,?,?,?,?)`)
-	defer stmt.Close()
 	if err != nil {
 		panic(err)
 	}
+	defer stmt.Close()
 	tid := t.Variables.Thread["tid"].(string)
 	fid := t.Variables.Thread["fid"].(string)
 	authorid := t.Variables.Thread["authorid"].(string)
@@ -70,14 +76,14 @@ func sqlset(t *thread) {
 	}
 }
 
-var htmlreg = regexp.MustCompile("\\<[\\S\\s]+?\\>")
+var htmlreg = regexp.MustCompile(`\<[\S\s]+?\>`)
 
 func qasave(t *thread) {
 	stmt, err := db.Prepare(`INSERT INTO qafts5 VALUES (?,?,?)`)
-	defer stmt.Close()
 	if err != nil {
 		panic(err)
 	}
+	defer stmt.Close()
 	tid := t.Variables.Thread["tid"].(string)
 	subject := t.Variables.Thread["subject"].(string)
 	temptxt := t.Variables.Postlist
@@ -87,6 +93,9 @@ func qasave(t *thread) {
 		p := post{}
 		m := v.(map[string]interface{})
 		k, ok := m["message"].(string)
+		if !ok {
+			continue
+		}
 		k = htmlreg.ReplaceAllString(k, "")
 		k = html.UnescapeString(html.UnescapeString(k))
 
@@ -118,15 +127,15 @@ type post struct {
 
 func sqlget(id int) int {
 	stmt, err := db.Prepare(`SELECT i FROM config WHERE id = ?`)
+	if err != nil {
+		panic(err)
+	}
 	defer stmt.Close()
-	if err != nil {
-		panic(err)
-	}
 	rows, err := stmt.Query(id)
-	defer rows.Close()
 	if err != nil {
 		panic(err)
 	}
+	defer rows.Close()
 	rows.Next()
 	var fid int
 	rows.Scan(&fid)
@@ -135,9 +144,9 @@ func sqlget(id int) int {
 
 func sqlup(s, id int) {
 	stmt, err := db.Prepare("UPDATE config SET i = ? WHERE id = ?")
-	defer stmt.Close()
 	if err != nil {
 		panic(err)
 	}
+	defer stmt.Close()
 	stmt.Exec(s, id)
 }

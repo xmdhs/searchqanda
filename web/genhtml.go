@@ -35,7 +35,7 @@ func pase(w io.Writer, list []resultslist, Name, page, link string) {
 		List: list,
 		T:    T,
 	}
-	err := t.ExecuteTemplate(w, "page", r)
+	err := t.ExecuteTemplate(w, "html", r)
 	if err != nil {
 		log.Println(err)
 		return
@@ -46,7 +46,7 @@ var t *template.Template
 
 func init() {
 	var err error
-	t, err = template.New("page").Parse(ahtml)
+	t, err = template.ParseFS(htmlfs, "html/*")
 	if err != nil {
 		panic(err)
 	}

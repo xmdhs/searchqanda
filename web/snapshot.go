@@ -21,7 +21,11 @@ func Snapshot(w http.ResponseWriter, r *http.Request) {
 		tojson = true
 	}
 	if query == "" {
-		w.Write([]byte(snapshot))
+		b, err := htmlfs.ReadFile("html/snapshot.html")
+		if err != nil {
+			panic(err)
+		}
+		w.Write([]byte(b))
 	} else {
 		i, err := strconv.ParseInt(query, 10, 64)
 		if err != nil {

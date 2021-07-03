@@ -12,7 +12,7 @@ import (
 	"github.com/xmdhs/searchqanda/get"
 )
 
-var htmlreg = regexp.MustCompile("\\<[\\S\\s]+?\\>")
+var htmlreg = regexp.MustCompile(`\<[\S\s]+?\>`)
 
 func search(txt, offset string) ([]resultslist, error) {
 	if txt == "" {
@@ -35,10 +35,10 @@ func search(txt, offset string) ([]resultslist, error) {
 	txt = strings.Join(list, " ")
 	txt = "'" + txt + "'"
 	rows, err := get.Db.QueryContext(ctx, `SELECT key,subject,source FROM qafts5 WHERE qafts5 MATCH `+txt+` ORDER BY rank LIMIT 20 OFFSET ?`, offset)
-	defer rows.Close()
 	if err != nil {
 		return []resultslist{}, err
 	}
+	defer rows.Close()
 	var tid string
 	var subject string
 	var j string
