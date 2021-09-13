@@ -22,7 +22,7 @@ var X = gojieba.NewJieba(`dict/jieba.dict.utf8`, `dict/hmm_model.utf8`, `dict/us
 
 func init() {
 	var err error
-	db, err = sql.Open("sqlite3", "./hidethread.db")
+	db, err = sql.Open("sqlite3", "./hidethread.db?_txlock=IMMEDIATE&_journal_mode=WAL")
 	if err != nil {
 		panic(err)
 	}
