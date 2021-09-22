@@ -1,11 +1,14 @@
 package get
 
 import (
+	"compress/gzip"
 	"encoding/json"
-	"errors"
+	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -22,29 +25,52 @@ func init() {
 }
 
 func h(tid string) (b []byte, err error) {
-	reqs, err := http.NewRequest("GET", `https://late-sound-313b.xmdhs.workers.dev/api/mobile/index.php?version=4&module=viewthread&tid=`+tid, nil)
+	return httpget(`https://late-sound-313b.xmdhs.workers.dev/api/mobile/index.php?version=4&module=viewthread&tid=`+tid, cookie)
+}
+
+func httpget(url string, cookie string) ([]byte, error) {
+	reqs, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return
+		return nil, fmt.Errorf("httpget: %w", err)
 	}
 	reqs.Header.Set("Accept", "*/*")
-	reqs.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36")
+	reqs.Header.Add("accept-encoding", "gzip")
+	reqs.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36")
 	reqs.Header.Set("Cookie", cookie)
 	rep, err := c.Do(reqs)
 	if rep != nil {
 		defer rep.Body.Close()
 	}
 	if err != nil {
-		return
+		return nil, fmt.Errorf("httpget: %w", err)
 	}
 	if rep.StatusCode != 200 {
-		err = errors.New(rep.Status)
-		return
+		return nil, fmt.Errorf("httpget: %w", &ErrHttpCode{Code: rep.StatusCode})
 	}
-	b, err = ioutil.ReadAll(rep.Body)
+	var reader io.ReadCloser
+	switch rep.Header.Get("Content-Encoding") {
+	case "gzip":
+		reader, err = gzip.NewReader(rep.Body)
+		if err != nil {
+			return nil, fmt.Errorf("httpget: %w", err)
+		}
+		defer reader.Close()
+	default:
+		reader = rep.Body
+	}
+	b, err := ioutil.ReadAll(reader)
 	if err != nil {
-		return
+		return nil, fmt.Errorf("httpget: %w", err)
 	}
-	return
+	return b, nil
+}
+
+type ErrHttpCode struct {
+	Code int
+}
+
+func (e *ErrHttpCode) Error() string {
+	return "http code: " + strconv.Itoa(e.Code)
 }
 
 func getjson(tid string) (b []byte, err error) {
