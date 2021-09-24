@@ -31,7 +31,7 @@ func main() {
 
 func upsql() {
 	for i := 0; i < 2; i++ {
-		get.Startrange()
+		get.Start()
 	}
 }
 

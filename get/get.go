@@ -99,10 +99,19 @@ func ishide(t *thread) bool {
 
 func isqa(t *thread) bool {
 	fid, ok := t.Variables.Thread["fid"].(string)
-	if ok && (fid == "265" || fid == "110" || fid == "431" || fid == "1566" || fid == "266") {
+	_, isqa := qaMap[fid]
+	if ok && isqa {
 		return true
 	}
 	return false
+}
+
+var qaMap = map[string]struct{}{
+	"265":  {},
+	"110":  {},
+	"431":  {},
+	"1566": {},
+	"266":  {},
 }
 
 type thread struct {
@@ -119,5 +128,8 @@ func json2(b []byte) (t *thread, err error) {
 	t.Variables.Postlist = make([]interface{}, 0)
 	t.Variables.Thread = make(map[string]interface{})
 	err = json.Unmarshal(b, t)
-	return
+	if err != nil {
+		return nil, fmt.Errorf("json2: %w", err)
+	}
+	return t, nil
 }

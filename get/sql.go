@@ -3,6 +3,7 @@ package get
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"html"
 	"log"
 	"regexp"
@@ -10,9 +11,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/mattn/go-sqlite3"
 	"github.com/yanyiwu/gojieba"
-	//数据库驱动
-	_ "github.com/mattn/go-sqlite3"
 )
 
 var db *sql.DB
@@ -28,25 +28,20 @@ func init() {
 	}
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS hidethread(tid INT PRIMARY KEY NOT NULL,fid TEXT NOT NULL,authorid TEXT NOT NULL,author TEXT NOT NULL,views INT NOT NULL,dateline TEXT NOT NULL,lastpost TEXT NOT NULL,lastposter TEXT NOT NULL,subject TEXT NOT NULL)`)
 	if err != nil {
-		log.Println(err)
+		panic(err)
 	}
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS config(id INT PRIMARY KEY NOT NULL,i INT NOT NULL)`)
 	if err != nil {
-		log.Println(err)
+		panic(err)
 	}
 	_, err = db.Exec(`CREATE VIRTUAL TABLE IF NOT EXISTS qafts5 USING fts5(key,subject UNINDEXED, source)`)
 	if err != nil {
-		log.Println(err)
+		panic(err)
 	}
 	Db = db
 }
 
 func sqlset(t *thread) {
-	stmt, err := db.Prepare(`INSERT INTO hidethread VALUES (?,?,?,?,?,?,?,?,?)`)
-	if err != nil {
-		panic(err)
-	}
-	defer stmt.Close()
 	tid := t.Variables.Thread["tid"].(string)
 	fid := t.Variables.Thread["fid"].(string)
 	authorid := t.Variables.Thread["authorid"].(string)
@@ -69,26 +64,30 @@ func sqlset(t *thread) {
 	}
 	dateline = time.Unix(i, 0).In(l).Format("2006-01-02 15:04:05")
 
-	_, err = stmt.Exec(tid, fid, authorid, author, views, dateline, lastpost, lastposter, subject)
+	_, err = db.Exec(`INSERT INTO hidethread VALUES (?,?,?,?,?,?,?,?,?)`, tid, fid, authorid, author, views, dateline, lastpost, lastposter, subject)
 	log.Println(tid, fid, authorid, author, views, dateline, lastpost, lastposter, subject)
 	if err != nil {
-		log.Println(err, t)
+		e := sqlite3.Error{}
+		if errors.As(err, &e) {
+			if e.Code == sqlite3.ErrBusy || e.Code == sqlite3.ErrLocked {
+				log.Println(err)
+				time.Sleep(1 * time.Second)
+				sqlset(t)
+				return
+			}
+		}
+		panic(err)
 	}
 }
 
 var htmlreg = regexp.MustCompile(`\<[\S\s]+?\>`)
 
 func qasave(t *thread) {
-	stmt, err := db.Prepare(`INSERT INTO qafts5 VALUES (?,?,?)`)
-	if err != nil {
-		panic(err)
-	}
-	defer stmt.Close()
 	tid := t.Variables.Thread["tid"].(string)
 	subject := t.Variables.Thread["subject"].(string)
 	temptxt := t.Variables.Postlist
 	tt := make([]post, 0, len(temptxt))
-	log.Println("start", tid)
+	log.Println(tid)
 	for _, v := range temptxt {
 		p := post{}
 		m := v.(map[string]interface{})
@@ -112,12 +111,19 @@ func qasave(t *thread) {
 	if err != nil {
 		panic(err)
 	}
-	_, err = stmt.Exec(tid, subject, string(b))
-	log.Println("end", tid)
+	_, err = db.Exec(`INSERT INTO qafts5 VALUES (?,?,?)`, tid, subject, string(b))
 	if err != nil {
-		log.Println(err, t)
+		e := sqlite3.Error{}
+		if errors.As(err, &e) {
+			if e.Code == sqlite3.ErrBusy || e.Code == sqlite3.ErrLocked {
+				log.Println(err)
+				time.Sleep(1 * time.Second)
+				qasave(t)
+				return
+			}
+		}
+		panic(err)
 	}
-
 }
 
 type post struct {
@@ -126,27 +132,27 @@ type post struct {
 }
 
 func sqlget(id int) int {
-	stmt, err := db.Prepare(`SELECT i FROM config WHERE id = ?`)
-	if err != nil {
-		panic(err)
-	}
-	defer stmt.Close()
-	rows, err := stmt.Query(id)
-	if err != nil {
-		panic(err)
-	}
-	defer rows.Close()
-	rows.Next()
+	row := db.QueryRow(`SELECT i FROM config WHERE id = ?`, id)
 	var fid int
-	rows.Scan(&fid)
+	err := row.Scan(&fid)
+	if err != nil {
+		panic(err)
+	}
 	return fid
 }
 
 func sqlup(s, id int) {
-	stmt, err := db.Prepare("UPDATE config SET i = ? WHERE id = ?")
+	_, err := db.Exec("UPDATE config SET i = ? WHERE id = ?", s, id)
 	if err != nil {
+		e := sqlite3.Error{}
+		if errors.As(err, &e) {
+			if e.Code == sqlite3.ErrBusy || e.Code == sqlite3.ErrLocked {
+				log.Println(err)
+				time.Sleep(1 * time.Second)
+				sqlup(s, id)
+				return
+			}
+		}
 		panic(err)
 	}
-	defer stmt.Close()
-	stmt.Exec(s, id)
 }

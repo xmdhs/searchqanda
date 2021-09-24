@@ -11,35 +11,19 @@ import (
 	"time"
 )
 
-var w sync.WaitGroup
-
-func Start(start, end int, id int) {
-	s := sqlget(id)
-	if s == 0 {
-		_, err := db.Exec("INSERT INTO config VALUES (?,?)", id, start)
+func start(tid int, w *sync.WaitGroup) {
+	defer w.Done()
+	for {
+		b, err := getjson(strconv.Itoa(tid))
 		if err != nil {
-			panic(err)
-		}
-	}
-	if s < start || s > end {
-		_, err := db.Exec("UPDATE config SET i = ? WHERE id = ?", start, id)
-		if err != nil {
-			panic(err)
-		}
-	}
-	for s < end {
-		time.Sleep(500 * time.Millisecond)
-		s = sqlget(id)
-		b, err := getjson(strconv.Itoa(s))
-		if err != nil {
-			log.Println(err, "tid", s)
-			time.Sleep(5 * time.Second)
+			log.Println(err, "tid", tid)
+			time.Sleep(3 * time.Second)
 			continue
 		}
 		t, err := json2(b)
 		if err != nil {
-			s++
-			sqlup(s, id)
+			log.Println(err, "tid", tid)
+			time.Sleep(3 * time.Second)
 			continue
 		}
 		if ishide(t) {
@@ -47,66 +31,46 @@ func Start(start, end int, id int) {
 		} else if isqa(t) {
 			qasave(t)
 		}
-		s++
-		sqlup(s, id)
 	}
-	w.Done()
 }
 
-func Range(mintid, maxtid, thread int) {
-	a := (maxtid - mintid) / thread
-	w.Add(1)
-	go Start(a*thread+mintid, maxtid+1, thread)
-	for i := 0; i < thread; i++ {
-		b := a * i
-		if b == 0 {
-			b++
-		}
-		w.Add(1)
-		go Start(b+mintid, a*(i+1)+mintid, i)
-	}
-	w.Wait()
-}
-
-func Startrange() {
-	start := sqlget(-2)
-	end := sqlget(-1)
-	if start == 0 {
-		_, err := db.Exec("INSERT INTO config VALUES (?,?)", -2, 0)
-		if err != nil {
-			log.Println(err)
-		}
-	}
-	if end == 0 {
-		tid, err := getnewtid()
+func Start() {
+	last := sqlget(-2)
+	if last == 0 {
+		_, err := db.Exec("INSERT INTO config VALUES (?,?)", -2, 1)
 		if err != nil {
 			panic(err)
 		}
-		_, err = db.Exec("INSERT INTO config VALUES (?,?)", -1, tid)
-		if err != nil {
-			panic(err)
-		}
-		end = sqlget(-1)
+		last = 1
 	}
-	Range(start, end, 5)
+
 	tid, err := getnewtid()
 	if err != nil {
-		log.Println(err)
-		return
+		panic(err)
 	}
 	if tid == "" {
-		log.Println(`tid == ""`)
-		return
+		panic(`tid == ""`)
+	}
+	w := sync.WaitGroup{}
+
+	itid, err := strconv.Atoi(tid)
+	if err != nil {
+		panic(err)
 	}
 
-	_, err = db.Exec("UPDATE config SET i = ? WHERE id = ?", end, -2)
-	if err != nil {
-		panic(err)
+	a := 0
+	for i := last; i < itid; i++ {
+		w.Add(1)
+		go start(i, &w)
+		a++
+		if a > 7 {
+			w.Wait()
+			a = 0
+			sqlup(i, -2)
+			time.Sleep(1 * time.Second)
+		}
 	}
-	_, err = db.Exec("UPDATE config SET i = ? WHERE id = ?", tid, -1)
-	if err != nil {
-		panic(err)
-	}
+
 }
 
 func getnewtid() (tid string, err error) {
