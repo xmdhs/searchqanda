@@ -75,7 +75,7 @@ func Start() {
 
 }
 
-const root = "https://www.mcbbs.net/"
+const root = "https://late-sound-313b.xmdhs.workers.dev"
 
 func getnewtid() (tid string, err error) {
 	reqs, err := http.NewRequest("GET", root+"/forum.php?mod=guide&view=newthread&page=3", nil)
