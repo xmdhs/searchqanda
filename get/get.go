@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -25,7 +24,7 @@ func init() {
 }
 
 func h(tid string) (b []byte, err error) {
-	return httpget(`https://late-sound-313b.xmdhs.workers.dev/api/mobile/index.php?version=4&module=viewthread&tid=`+tid, cookie)
+	return httpget(root+`/api/mobile/index.php?version=4&module=viewthread&tid=`+tid, cookie)
 }
 
 func httpget(url string, cookie string) ([]byte, error) {
@@ -71,18 +70,6 @@ type ErrHttpCode struct {
 
 func (e *ErrHttpCode) Error() string {
 	return "http code: " + strconv.Itoa(e.Code)
-}
-
-func getjson(tid string) (b []byte, err error) {
-	for i := 0; i < 3; i++ {
-		b, err = h(tid)
-		if err != nil {
-			log.Println(err, tid)
-			continue
-		}
-		break
-	}
-	return
 }
 
 func ishide(t *thread) bool {

@@ -14,7 +14,7 @@ import (
 func start(tid int, w *sync.WaitGroup) {
 	defer w.Done()
 	for {
-		b, err := getjson(strconv.Itoa(tid))
+		b, err := h(strconv.Itoa(tid))
 		if err != nil {
 			log.Println(err, "tid", tid)
 			time.Sleep(3 * time.Second)
@@ -31,6 +31,7 @@ func start(tid int, w *sync.WaitGroup) {
 		} else if isqa(t) {
 			qasave(t)
 		}
+		break
 	}
 }
 
@@ -60,6 +61,7 @@ func Start() {
 
 	a := 0
 	for i := last; i < itid; i++ {
+		i := i
 		w.Add(1)
 		go start(i, &w)
 		a++
@@ -73,8 +75,10 @@ func Start() {
 
 }
 
+const root = "https://www.mcbbs.net/"
+
 func getnewtid() (tid string, err error) {
-	reqs, err := http.NewRequest("GET", "https://late-sound-313b.xmdhs.workers.dev/forum.php?mod=guide&view=newthread&page=3", nil)
+	reqs, err := http.NewRequest("GET", root+"/forum.php?mod=guide&view=newthread&page=3", nil)
 	if err != nil {
 		return
 	}
@@ -86,6 +90,9 @@ func getnewtid() (tid string, err error) {
 	}
 	if err != nil {
 		return
+	}
+	if rep.StatusCode != 200 {
+		return "", &ErrHttpCode{Code: rep.StatusCode}
 	}
 	bw := bufio.NewScanner(rep.Body)
 	for bw.Scan() {
