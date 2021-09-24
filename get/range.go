@@ -60,11 +60,12 @@ func Start() {
 	}
 
 	a := 0
+	llast := 0
 	for i := last; i < itid; i++ {
-		i := i
 		w.Add(1)
 		go start(i, &w)
 		a++
+		llast = i
 		if a > 7 {
 			w.Wait()
 			a = 0
@@ -72,7 +73,8 @@ func Start() {
 			time.Sleep(1 * time.Second)
 		}
 	}
-
+	w.Wait()
+	sqlup(llast, -1)
 }
 
 const root = "https://late-sound-313b.xmdhs.workers.dev"
