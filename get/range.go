@@ -35,9 +35,9 @@ func start(tid int, w *sync.WaitGroup) {
 }
 
 func Start() {
-	last := sqlget(-2)
+	last := sqlget(-1)
 	if last == 0 {
-		_, err := db.Exec("INSERT INTO config VALUES (?,?)", -2, 1)
+		_, err := db.Exec("INSERT INTO config VALUES (?,?)", -1, 1)
 		if err != nil {
 			panic(err)
 		}
@@ -66,7 +66,7 @@ func Start() {
 		if a > 7 {
 			w.Wait()
 			a = 0
-			sqlup(i, -2)
+			sqlup(i, -1)
 			time.Sleep(1 * time.Second)
 		}
 	}
