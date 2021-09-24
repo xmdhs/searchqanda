@@ -135,7 +135,7 @@ func sqlget(id int) int {
 	row := db.QueryRow(`SELECT i FROM config WHERE id = ?`, id)
 	var fid int
 	err := row.Scan(&fid)
-	if err != nil {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		panic(err)
 	}
 	return fid
