@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-var c = http.Client{Timeout: 5 * time.Second}
+var c = http.Client{Timeout: 30 * time.Second}
 
 var cookie string
 
