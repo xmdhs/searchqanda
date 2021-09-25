@@ -156,3 +156,13 @@ func sqlup(s, id int) {
 		panic(err)
 	}
 }
+
+func hasPost(tid int) bool {
+	row := db.QueryRow(`SELECT COUNT(*) FROM qafts5 WHERE key MATCH ?`, tid)
+	var c int
+	err := row.Scan(&c)
+	if err != nil {
+		panic(err)
+	}
+	return c > 0
+}

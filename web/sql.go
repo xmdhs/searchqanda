@@ -16,16 +16,11 @@ var htmlreg = regexp.MustCompile(`\<[\S\s]+?\>`)
 
 func search(txt, offset string) ([]resultslist, error) {
 	if txt == "" {
-		return []resultslist{}, errors.New(`""`)
-	}
-
-	if txt == "" {
 		return []resultslist{}, errors.New(`txt == ""`)
 	}
 	list := cut(txt)
 	l := strings.Split(txt, " ")
 	for i, v := range list {
-		v = replace(v)
 		list[i] = cutsearch(v)
 	}
 	ctx, cancel := context.WithCancel(context.TODO())
@@ -33,8 +28,7 @@ func search(txt, offset string) ([]resultslist, error) {
 		cancel()
 	})
 	txt = strings.Join(list, " ")
-	txt = "'" + txt + "'"
-	rows, err := get.Db.QueryContext(ctx, `SELECT key,subject,source FROM qafts5 WHERE qafts5 MATCH `+txt+` ORDER BY rank LIMIT 20 OFFSET ?`, offset)
+	rows, err := get.Db.QueryContext(ctx, `SELECT key,subject,source FROM qafts5 WHERE qafts5 MATCH ? ORDER BY rank LIMIT 20 OFFSET ?`, txt, offset)
 	if err != nil {
 		return []resultslist{}, err
 	}
@@ -113,32 +107,6 @@ func search(txt, offset string) ([]resultslist, error) {
 type post struct {
 	Message  string
 	Authorid string
-}
-
-func replace(txt string) string {
-	txt = strings.ReplaceAll(txt, "+", " ")
-	txt = strings.ReplaceAll(txt, ";", " ")
-	txt = strings.ReplaceAll(txt, "'", " ")
-	txt = strings.ReplaceAll(txt, ",", " ")
-	txt = strings.ReplaceAll(txt, "?", " ")
-	txt = strings.ReplaceAll(txt, "--", " ")
-	txt = strings.ReplaceAll(txt, "<", " ")
-	txt = strings.ReplaceAll(txt, ">", " ")
-	txt = strings.ReplaceAll(txt, "@", " ")
-	txt = strings.ReplaceAll(txt, "=", " ")
-	txt = strings.ReplaceAll(txt, "*", " ")
-	txt = strings.ReplaceAll(txt, ":", " ")
-	txt = strings.ReplaceAll(txt, "&", " ")
-	txt = strings.ReplaceAll(txt, "#", " ")
-	txt = strings.ReplaceAll(txt, "%", " ")
-	txt = strings.ReplaceAll(txt, "$", " ")
-	txt = strings.ReplaceAll(txt, `\`, " ")
-	txt = strings.ReplaceAll(txt, `(`, " ")
-	txt = strings.ReplaceAll(txt, `)`, " ")
-	txt = strings.ReplaceAll(txt, ".", " ")
-	txt = strings.ReplaceAll(txt, "/", " ")
-
-	return txt
 }
 
 func cut(txt string) []string {

@@ -7,17 +7,10 @@ import (
 )
 
 func WebRoot(w http.ResponseWriter, req *http.Request) {
-	q := req.URL.Query()
-	var page, query string
-	if len(q["q"]) == 0 {
-		query = ""
-	} else {
-		query = q["q"][0]
-	}
-	if len(q["page"]) == 0 {
+	query := req.FormValue("q")
+	page := req.FormValue("page")
+	if page == "" {
 		page = "0"
-	} else {
-		page = q["page"][0]
 	}
 	if len(query) > 100 {
 		err := errors.New("关键词过长")

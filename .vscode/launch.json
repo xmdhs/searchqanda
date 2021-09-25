@@ -10,7 +10,6 @@
             "request": "launch",
             "mode": "auto",
             "program": "${fileDirname}",
-            "args": ["a"],
             "buildFlags": "-tags fts5"
         }
     ]

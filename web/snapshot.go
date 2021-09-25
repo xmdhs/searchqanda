@@ -33,15 +33,13 @@ func Snapshot(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		s := strconv.FormatInt(i, 10)
-		rows, err := get.Db.Query(`SELECT source FROM qafts5 WHERE key MATCH ` + s)
+		rows := get.Db.QueryRow(`SELECT source FROM qafts5 WHERE key MATCH ?`, s)
+		source := ""
+		err = rows.Scan(&source)
 		if err != nil {
 			e(w, err)
 			return
 		}
-		source := ""
-		rows.Next()
-		rows.Scan(&source)
-		rows.Close()
 		if source == "" {
 			http.NotFound(w, r)
 			return

@@ -62,6 +62,9 @@ func Start() {
 	a := 0
 	llast := 0
 	for i := last; i < itid; i++ {
+		if hasPost(i) {
+			continue
+		}
 		w.Add(1)
 		go start(i, &w)
 		a++
