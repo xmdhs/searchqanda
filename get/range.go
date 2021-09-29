@@ -23,8 +23,7 @@ func start(tid int, w *sync.WaitGroup) {
 		t, err := json2(b)
 		if err != nil {
 			log.Println(err, "tid", tid)
-			time.Sleep(3 * time.Second)
-			continue
+			return
 		}
 		if ishide(t) {
 			sqlset(t)
