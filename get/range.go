@@ -35,6 +35,7 @@ func start(tid int, w *sync.WaitGroup) {
 }
 
 func Start() {
+	sqlup(1270428, -1)
 	last := sqlget(-1)
 	if last == 0 {
 		_, err := db.Exec("INSERT INTO config VALUES (?,?)", -1, 1)
@@ -76,7 +77,9 @@ func Start() {
 		}
 	}
 	w.Wait()
-	sqlup(llast, -1)
+	if llast != 0 {
+		sqlup(llast, -1)
+	}
 }
 
 const root = "https://late-sound-313b.xmdhs.workers.dev"

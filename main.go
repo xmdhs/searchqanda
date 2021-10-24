@@ -30,9 +30,7 @@ func main() {
 }
 
 func upsql() {
-	for i := 0; i < 2; i++ {
-		get.Start()
-	}
+	get.Start()
 }
 
 const key = "53e6b64604b8ed484bb6c67b93c0987bec828db8d4a725d080dd7092b9fb15b2"
