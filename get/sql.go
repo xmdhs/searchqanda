@@ -75,6 +75,10 @@ func sqlset(t *thread) {
 				sqlset(t)
 				return
 			}
+			if e.Code == sqlite3.ErrConstraint {
+				log.Println(err)
+				return
+			}
 		}
 		panic(err)
 	}
