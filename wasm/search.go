@@ -81,12 +81,6 @@ func body(query, page string) (vecty.ComponentOrHTML, bool, error) {
 	if len(query) > 100 {
 		return nil, false, fmt.Errorf("body: %w", ErrTooLong)
 	}
-	i, err := strconv.ParseInt(page, 10, 64)
-	if err != nil {
-		return nil, false, fmt.Errorf("body: %w", err)
-	}
-
-	page = strconv.FormatInt(i*20, 10)
 	r, err := serachApi(query, page)
 	if err != nil {
 		return nil, false, fmt.Errorf("body: %w", err)
