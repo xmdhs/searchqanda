@@ -32,7 +32,7 @@ func (s *search) Render() vecty.ComponentOrHTML {
 	if err != nil {
 		c = elem.Paragraph(vecty.Text(err.Error()))
 	} else {
-		query := u.Query().Get("q")
+		query = u.Query().Get("q")
 		page := u.Query().Get("page")
 		b := false
 		c, b, err = body(query, page)
@@ -41,9 +41,13 @@ func (s *search) Render() vecty.ComponentOrHTML {
 		}
 		vecty.SetTitle(query + " - 问答版搜索")
 		if b {
+			i, err := strconv.ParseInt(page, 10, 64)
+			if err != nil {
+				c = elem.Paragraph(vecty.Text(err.Error()))
+			}
 			q := url.Values{}
 			q.Set("q", query)
-			q.Set("page", page)
+			q.Set("page", strconv.FormatInt(i+1, 10))
 			nextLink = elem.Paragraph(router.Link("/search/s?"+q.Encode(), "next", router.LinkOptions{}))
 		}
 	}
