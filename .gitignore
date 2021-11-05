@@ -1,2 +1,4 @@
-*hidethread.db*
+*hidethread*
 cookie.txt
+*.wasm
+key.go

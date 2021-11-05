@@ -17,8 +17,10 @@ func main() {
 		r := http.NewServeMux()
 		r.HandleFunc("/search", web.Index)
 		r.HandleFunc("/search/s", web.WebRoot)
+		r.HandleFunc("/search/api/s", web.SerchApi)
 		r.HandleFunc("/search/hide", web.Auth(web.Hidethead, key))
 		r.HandleFunc("/search/snapshot", web.Auth(web.Snapshot, key))
+		r.HandleFunc("/search/s.wasm", web.Wasm)
 		s := http.Server{
 			Addr:         ":8081",
 			ReadTimeout:  5 * time.Second,

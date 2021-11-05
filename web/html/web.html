@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>问答版搜索</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/xmdhs/searchqanda/style.css">
+    <script defer src='https://static.cloudflareinsights.com/beacon.min.js'
+        data-cf-beacon='{"token": "b5191d5d3a534b2c825c364fe714b39e"}'></script>
+    <script src="https://cdn.jsdelivr.net/gh/golang/go@go1.17.3/misc/wasm/wasm_exec.js"></script>
+    <script>
+        if (window.fetch == null || window.WebAssembly == null) {
+            alert("请更新浏览器")
+        }
+    </script>
+    <script>
+        let go;
+        try {
+            go = new Go();
+        } catch (error) {
+            alert("请更新浏览器")
+        }
+        (async () => {
+            const response = await fetch("./s.wasm");
+            const buffer = await response.arrayBuffer();
+            const obj = await WebAssembly.instantiate(buffer, go.importObject)
+            go.run(obj.instance);
+        })()
+    </script>
+</head>
+
+<body></body>
+
+</html>

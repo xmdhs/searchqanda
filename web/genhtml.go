@@ -1,6 +1,7 @@
 package web
 
 import (
+	"encoding/json"
 	"html/template"
 	"io"
 	"log"
@@ -19,6 +20,18 @@ type resultslist struct {
 	Txt   string
 	Txt1  string
 	Key   string
+}
+
+func paseApi(w io.Writer, list []resultslist, Name, page, link string) {
+	a := apiData{}
+	a.Code = 0
+	a.Data = list
+	b, err := json.Marshal(a)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	w.Write(b)
 }
 
 func pase(w io.Writer, list []resultslist, Name, page, link string) {
