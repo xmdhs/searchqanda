@@ -22,7 +22,7 @@
             alert("请更新浏览器")
         }
         (async () => {
-            const response = await fetch("./s.wasm?v=1");
+            const response = await fetch("./s.wasm?v=2");
             const buffer = await response.arrayBuffer();
             const obj = await WebAssembly.instantiate(buffer, go.importObject)
             go.run(obj.instance);

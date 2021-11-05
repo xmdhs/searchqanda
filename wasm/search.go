@@ -41,6 +41,9 @@ func (s *search) Render() vecty.ComponentOrHTML {
 		}
 		vecty.SetTitle(query + " - 问答版搜索")
 		if b {
+			if page == "" {
+				page = "0"
+			}
 			i, err := strconv.ParseInt(page, 10, 64)
 			if err != nil {
 				c = elem.Paragraph(vecty.Text(err.Error()))
