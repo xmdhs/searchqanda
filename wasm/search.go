@@ -16,7 +16,6 @@ import (
 	"github.com/hexops/vecty"
 	"github.com/hexops/vecty/elem"
 	"github.com/hexops/vecty/prop"
-	router "marwan.io/vecty-router"
 )
 
 type search struct {
@@ -51,7 +50,7 @@ func (s *search) Render() vecty.ComponentOrHTML {
 			q := url.Values{}
 			q.Set("q", query)
 			q.Set("page", strconv.FormatInt(i+1, 10))
-			nextLink = elem.Paragraph(router.Link("/search/s?"+q.Encode(), "next", router.LinkOptions{}))
+			nextLink = elem.Paragraph(link(s, "/search/s?"+q.Encode(), "next"))
 		}
 	}
 	return elem.Body(
