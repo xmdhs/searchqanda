@@ -2,3 +2,5 @@
 cookie.txt
 *.wasm
 key.go
+/static
+

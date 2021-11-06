@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"log"
 	"net/http"
 	"os"
@@ -8,8 +9,6 @@ import (
 
 	"github.com/xmdhs/searchqanda/get"
 	"github.com/xmdhs/searchqanda/web"
-
-	_ "embed"
 )
 
 func main() {
@@ -18,6 +17,7 @@ func main() {
 	} else {
 		r := http.NewServeMux()
 		r.HandleFunc("/search", web.Index)
+		r.Handle("/search/static", http.FileServer(http.FS(staticfile)))
 		r.HandleFunc("/search/s", func(rw http.ResponseWriter, r *http.Request) {
 			rw.Write(htmlfile)
 		})
@@ -34,7 +34,10 @@ func main() {
 	}
 }
 
-//go:embed dist/index.html
+//go:embed static
+var staticfile embed.FS
+
+//go:embed static/index.html
 var htmlfile []byte
 
 func upsql() {
