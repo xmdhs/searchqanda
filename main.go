@@ -17,7 +17,10 @@ func main() {
 	} else {
 		r := http.NewServeMux()
 		r.HandleFunc("/search", web.Index)
-		r.Handle("/search/static/", http.FileServer(http.FS(staticfile)))
+		r.HandleFunc("/search/static/", func(rw http.ResponseWriter, r *http.Request) {
+			rw.Header().Set("cache-control", "max-age=2592000")
+			http.StripPrefix("/search/", http.FileServer(http.FS(staticfile))).ServeHTTP(rw, r)
+		})
 		r.HandleFunc("/search/s", func(rw http.ResponseWriter, r *http.Request) {
 			rw.Write(htmlfile)
 		})
