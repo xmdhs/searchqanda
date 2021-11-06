@@ -1,9 +1,6 @@
 package web
 
 import (
-	"crypto/hmac"
-	"crypto/sha256"
-	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -21,28 +18,6 @@ func WebRoot(w http.ResponseWriter, req *http.Request) {
 }
 
 func SerchApi(w http.ResponseWriter, req *http.Request) {
-	s := req.Header.Get("sign")
-	b, err := hex.DecodeString(s)
-	if err != nil {
-		e := apiData{
-			Code: -1,
-			Msg:  err.Error(),
-		}
-		w.WriteHeader(500)
-		w.Write(e.Byte())
-		return
-	}
-	h := hmac.New(sha256.New, []byte(key))
-	h.Write([]byte(req.URL.RawQuery))
-	if !hmac.Equal(h.Sum(nil), b) {
-		e := apiData{
-			Code: -1,
-			Msg:  "sign error",
-		}
-		w.WriteHeader(500)
-		w.Write(e.Byte())
-		return
-	}
 	query := req.FormValue("q")
 	page := req.FormValue("page")
 	if page == "" {
@@ -118,14 +93,3 @@ func Index(w http.ResponseWriter, req *http.Request) {
 	}
 	w.Write([]byte(b))
 }
-
-func Wasm(w http.ResponseWriter, req *http.Request) {
-	w.Header().Set("Content-Type", "application/wasm")
-	w.Header().Set("Cache-Control", "max-age=31536000")
-	w.Write(wasm)
-}
-
-//go:embed s.wasm
-var wasm []byte
-
-var key = "12345678901234567890123456789012"

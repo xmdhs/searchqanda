@@ -8,6 +8,8 @@ import (
 
 	"github.com/xmdhs/searchqanda/get"
 	"github.com/xmdhs/searchqanda/web"
+
+	_ "embed"
 )
 
 func main() {
@@ -16,11 +18,12 @@ func main() {
 	} else {
 		r := http.NewServeMux()
 		r.HandleFunc("/search", web.Index)
-		r.HandleFunc("/search/s", web.WebRoot)
+		r.HandleFunc("/search/s", func(rw http.ResponseWriter, r *http.Request) {
+			rw.Write(htmlfile)
+		})
 		r.HandleFunc("/search/api/s", web.SerchApi)
 		r.HandleFunc("/search/hide", web.Auth(web.Hidethead, key))
 		r.HandleFunc("/search/snapshot", web.Auth(web.Snapshot, key))
-		r.HandleFunc("/search/s.wasm", web.Wasm)
 		s := http.Server{
 			Addr:         ":8081",
 			ReadTimeout:  5 * time.Second,
@@ -30,6 +33,9 @@ func main() {
 		log.Println(s.ListenAndServe())
 	}
 }
+
+//go:embed dist/index.html
+var htmlfile []byte
 
 func upsql() {
 	get.Start()
