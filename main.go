@@ -17,7 +17,7 @@ func main() {
 	} else {
 		r := http.NewServeMux()
 		r.HandleFunc("/search", web.Index)
-		r.Handle("/search/static", http.FileServer(http.FS(staticfile)))
+		r.Handle("/search/static/", http.FileServer(http.FS(staticfile)))
 		r.HandleFunc("/search/s", func(rw http.ResponseWriter, r *http.Request) {
 			rw.Write(htmlfile)
 		})
