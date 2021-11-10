@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"html"
 	"regexp"
 	"strings"
@@ -14,9 +15,11 @@ import (
 
 var htmlreg = regexp.MustCompile(`\<[\S\s]+?\>`)
 
-func search(txt, offset string) ([]resultslist, error) {
+var ErrEmpty = errors.New("empty")
+
+func search(txt, offset string) ([]resultslist, int, error) {
 	if txt == "" {
-		return []resultslist{}, errors.New(`txt == ""`)
+		return []resultslist{}, 0, fmt.Errorf("search: %w", ErrEmpty)
 	}
 	list := cut(txt)
 	l := strings.Split(txt, " ")
@@ -30,7 +33,7 @@ func search(txt, offset string) ([]resultslist, error) {
 	txt = strings.Join(list, " ")
 	rows, err := get.Db.QueryContext(ctx, `SELECT key,subject,source FROM qafts5 WHERE qafts5 MATCH ? ORDER BY rank LIMIT 20 OFFSET ?`, txt, offset)
 	if err != nil {
-		return []resultslist{}, err
+		return []resultslist{}, 0, fmt.Errorf("search: %w", err)
 	}
 	defer rows.Close()
 	var tid string
@@ -40,12 +43,12 @@ func search(txt, offset string) ([]resultslist, error) {
 	for rows.Next() {
 		err := rows.Scan(&tid, &subject, &j)
 		if err != nil {
-			return []resultslist{}, err
+			return []resultslist{}, 0, fmt.Errorf("search: %w", err)
 		}
 		p := make([]post, 0)
 		err = json.Unmarshal([]byte(j), &p)
 		if err != nil {
-			return []resultslist{}, err
+			return []resultslist{}, 0, fmt.Errorf("search: %w", err)
 		}
 		var b1, b2, key string
 		for _, v := range p {
@@ -101,7 +104,13 @@ func search(txt, offset string) ([]resultslist, error) {
 		}
 		lists = append(lists, l)
 	}
-	return lists, nil
+	count := 0
+	row := get.Db.QueryRowContext(ctx, `SELECT COUNT(*) FROM qafts5 WHERE qafts5 MATCH ?`, txt)
+	err = row.Scan(&count)
+	if err != nil {
+		return []resultslist{}, 0, fmt.Errorf("search: %w", err)
+	}
+	return lists, count, nil
 }
 
 type post struct {

@@ -2,7 +2,6 @@ package web
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
 	"strconv"
 
@@ -24,54 +23,45 @@ func SerchApi(w http.ResponseWriter, req *http.Request) {
 		page = "0"
 	}
 	if len(query) > 100 {
-		err := errors.New("关键词过长")
-		e := apiData{
-			Code: -1,
-			Msg:  err.Error(),
-		}
-		w.WriteHeader(500)
-		w.Write(e.Byte())
+		apiErr("关键词过长", w)
 		return
 	}
 	i, err := strconv.ParseInt(page, 10, 64)
 	if err != nil {
-		e := apiData{
-			Code: -1,
-			Msg:  err.Error(),
-		}
-		w.WriteHeader(500)
-		w.Write(e.Byte())
+		apiErr(err.Error(), w)
 		return
 	}
 	page = strconv.FormatInt(i*20, 10)
-	r, err := search(query, page)
+	r, count, err := search(query, page)
 	if err != nil {
-		e := apiData{
-			Code: -1,
-			Msg:  err.Error(),
-		}
-		w.WriteHeader(500)
-		w.Write(e.Byte())
+		apiErr(err.Error(), w)
 		return
 	}
 	if len(r) == 0 {
-		e := apiData{
-			Code: -1,
-			Msg:  "none",
-		}
-		w.WriteHeader(404)
-		w.Write(e.Byte())
+		apiErr("none", w)
 		return
 	}
 	i++
-	page = strconv.FormatInt(i, 10)
-	paseApi(w, r, query, page, "./s?q=")
+	a := apiResults{
+		List:  r,
+		Count: count,
+	}
+	paseApi(w, a)
+}
+
+func apiErr(err string, w http.ResponseWriter) {
+	e := apiData{
+		Code: -1,
+		Msg:  err,
+	}
+	w.WriteHeader(500)
+	w.Write(e.Byte())
 }
 
 type apiData struct {
-	Code int    `json:"code"`
-	Msg  string `json:"msg"`
-	Data interface{}
+	Code int         `json:"code"`
+	Msg  string      `json:"msg"`
+	Data interface{} `json:"data"`
 }
 
 func (e *apiData) Byte() []byte {

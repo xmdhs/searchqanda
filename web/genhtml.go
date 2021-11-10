@@ -15,17 +15,22 @@ type results struct {
 }
 
 type resultslist struct {
-	Title string
-	Link  string
-	Txt   string
-	Txt1  string
-	Key   string
+	Title string `json:"title"`
+	Link  string `json:"link"`
+	Txt   string `json:"txt"`
+	Txt1  string `json:"txt1"`
+	Key   string `json:"key"`
 }
 
-func paseApi(w io.Writer, list []resultslist, Name, page, link string) {
+type apiResults struct {
+	List  []resultslist `json:"list"`
+	Count int           `json:"count"`
+}
+
+func paseApi(w io.Writer, r interface{}) {
 	a := apiData{}
 	a.Code = 0
-	a.Data = list
+	a.Data = r
 	b, err := json.Marshal(a)
 	if err != nil {
 		log.Println(err)
